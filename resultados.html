@@ -40,7 +40,7 @@
             <form id="searchForm" class="collapse mt-3">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
-                        <div class="airport-autocomplete" data-airport-autocomplete>
+                        <div class="airport-autocomplete" data-airport-autocomplete data-clearable>
                             <label for="origen" class="form-label fw-bold small mb-1">Origen</label>
                             <div class="position-relative">
                                 <input type="text" class="form-control form-control-sm airport-input" id="origen" data-airport-input="origen" data-airport-code-target="origenCodigo" placeholder="Ciudad, país o aeropuerto" autocomplete="off">
@@ -49,8 +49,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <button type="button" class="btn btn-light btn-sm swap-route-btn swap-route-btn-sm" id="swapRouteBtnResults" aria-label="Intercambiar origen y destino">
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </div>
                     <div class="col-md-3">
-                        <div class="airport-autocomplete" data-airport-autocomplete>
+                        <div class="airport-autocomplete" data-airport-autocomplete data-clearable>
                             <label for="destino" class="form-label fw-bold small mb-1">Destino</label>
                             <div class="position-relative">
                                 <input type="text" class="form-control form-control-sm airport-input" id="destino" data-airport-input="destino" data-airport-code-target="destinoCodigo" placeholder="Ciudad, país o aeropuerto" autocomplete="off">
@@ -98,6 +103,18 @@
 
                         <!-- Filtro Precio -->
                         <div class="mb-4">
+                            <label class="form-label fw-bold">Ordenar por</label>
+                            <select class="form-select mb-3" id="sortSelect">
+                                <option value="precioAsc">Menor precio</option>
+                                <option value="precioDesc">Mayor precio</option>
+                                <option value="duracionAsc">Menor duración</option>
+                                <option value="escalasAsc">Menor cantidad de escalas</option>
+                                <option value="salidaAsc">Salida más temprana</option>
+                                <option value="salidaDesc">Salida más tardía</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
                             <label class="form-label fw-bold">Precio</label>
                             <div class="d-flex gap-2 mb-2">
                                 <span class="badge bg-light text-dark" id="priceMin">$0</span>
@@ -114,6 +131,36 @@
                         </div>
 
                         <!-- Filtro Escalas -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Aerolínea</label>
+                            <div class="airline-filter-list">
+                                <div class="form-check">
+                                    <input class="form-check-input airlineFilter" type="checkbox" value="LA" id="airlineLATAM" checked>
+                                    <label class="form-check-label" for="airlineLATAM">LATAM</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input airlineFilter" type="checkbox" value="SK" id="airlineSky" checked>
+                                    <label class="form-check-label" for="airlineSky">Sky Airline</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input airlineFilter" type="checkbox" value="JS" id="airlineJetSmart" checked>
+                                    <label class="form-check-label" for="airlineJetSmart">JetSmart</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input airlineFilter" type="checkbox" value="IB" id="airlineIberia" checked>
+                                    <label class="form-check-label" for="airlineIberia">Iberia</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input airlineFilter" type="checkbox" value="AA" id="airlineAmerican" checked>
+                                    <label class="form-check-label" for="airlineAmerican">American Airlines</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input airlineFilter" type="checkbox" value="AF" id="airlineAirFrance" checked>
+                                    <label class="form-check-label" for="airlineAirFrance">Air France</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mb-4">
                             <label class="form-label fw-bold">Escalas</label>
                             <div class="form-check">

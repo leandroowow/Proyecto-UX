@@ -147,6 +147,73 @@ html, body {
     min-height: 50px;
 }
 
+.airport-autocomplete,
+.position-relative[data-clearable] {
+    position: relative;
+}
+
+.clear-input-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.9rem;
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(100, 116, 139, 0.12);
+    color: var(--secondary-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    transition: all 0.2s ease;
+}
+
+.clear-input-btn:hover {
+    background: rgba(30, 58, 138, 0.12);
+    color: var(--primary-color);
+}
+
+.airport-autocomplete .airport-input,
+.position-relative[data-clearable] .form-control {
+    padding-right: 3.2rem;
+}
+
+.swap-route-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.swap-route-btn:hover {
+    transform: rotate(180deg);
+}
+
+.swap-route-btn-sm {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.airline-filter-list {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.reservas-section {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.reservas-section .table thead th {
+    border-top: 0;
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
 small {
     font-size: 0.8rem;
     display: block;

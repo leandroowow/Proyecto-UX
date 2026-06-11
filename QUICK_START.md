@@ -41,7 +41,7 @@ npm start
 node server.js
 
 # 3. Abre en navegador
-http://localhost:3000
+http://localhost:4000
 
 # 4. Para detener: Ctrl + C
 ```

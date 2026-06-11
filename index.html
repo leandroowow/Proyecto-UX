@@ -15,6 +15,9 @@
             <a class="navbar-brand fw-bold" href="index.html">
                 <i class="fas fa-plane-departure text-primary"></i> ReservaVuelos
             </a>
+            <a class="btn btn-outline-primary btn-sm" href="#misReservas">
+                <i class="fas fa-bookmark"></i> Mis reservas
+            </a>
         </div>
     </nav>
 
@@ -38,10 +41,10 @@
                         <i class="fas fa-search text-primary"></i> Buscar Vuelos
                     </h3>
                     
-                    <form id="searchForm" class="row g-3">
+                    <form id="searchForm" class="row g-3 align-items-end">
                         <!-- Origen -->
-                        <div class="col-md-6 col-lg-2">
-                            <div class="airport-autocomplete" data-airport-autocomplete>
+                        <div class="col-md-5 col-lg-4">
+                            <div class="airport-autocomplete" data-airport-autocomplete data-clearable>
                                 <label for="origen" class="form-label fw-bold">Origen</label>
                                 <div class="position-relative">
                                     <input 
@@ -62,8 +65,15 @@
                         </div>
 
                         <!-- Destino -->
-                        <div class="col-md-6 col-lg-2">
-                            <div class="airport-autocomplete" data-airport-autocomplete>
+                        <div class="col-12 col-lg-1 d-flex justify-content-center">
+                            <button type="button" class="btn btn-light swap-route-btn" id="swapRouteBtn" aria-label="Intercambiar origen y destino">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+
+                        <!-- Destino -->
+                        <div class="col-md-5 col-lg-4">
+                            <div class="airport-autocomplete" data-airport-autocomplete data-clearable>
                                 <label for="destino" class="form-label fw-bold">Destino</label>
                                 <div class="position-relative">
                                     <input 
@@ -176,6 +186,58 @@
                         </div>
                         <h5 class="fw-bold">Soporte 24/7</h5>
                         <p class="text-muted">Estamos aquí para ayudarte en cualquier momento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mis Reservas -->
+    <section id="misReservas" class="reservas-section py-5">
+        <div class="container">
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-10 text-center">
+                    <h3 class="fw-bold mb-2">Mis Reservas</h3>
+                    <p class="text-muted mb-0">Consulta reservas anteriores guardadas en tu navegador.</p>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-4 p-md-5">
+                            <div class="row g-3 align-items-end mb-4">
+                                <div class="col-md-8">
+                                    <label for="buscarReservaCodigo" class="form-label fw-bold">Buscar por código</label>
+                                    <input type="text" class="form-control form-control-lg" id="buscarReservaCodigo" placeholder="Ej: RV-2026-AB12CD">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="limpiarBusquedaReservas">
+                                        Limpiar búsqueda
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Fecha</th>
+                                            <th>Ruta</th>
+                                            <th>Aerolínea</th>
+                                            <th class="text-end">Precio</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reservasHistoryBody">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">No hay reservas guardadas todavía.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
