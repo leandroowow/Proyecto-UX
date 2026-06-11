@@ -5,11 +5,14 @@
 
 const aerolineas = [
     { codigo: 'LA', nombre: 'LATAM Airlines' },
+    { codigo: 'SK', nombre: 'Sky Airline' },
+    { codigo: 'JS', nombre: 'JetSmart' },
     { codigo: 'AV', nombre: 'Avianca' },
     { codigo: 'AM', nombre: 'Aeroméxico' },
+    { codigo: 'AA', nombre: 'American Airlines' },
+    { codigo: 'AF', nombre: 'Air France' },
     { codigo: 'UA', nombre: 'United Airlines' },
     { codigo: 'IB', nombre: 'Iberia' },
-    { codigo: 'AF', nombre: 'Air France' },
     { codigo: 'AZ', nombre: 'ITA Airways' },
     { codigo: 'BA', nombre: 'British Airways' },
     { codigo: 'LH', nombre: 'Lufthansa' },
@@ -169,16 +172,16 @@ function crearRutaBase(origen, destino, config) {
 
 const rutasBase = [
     crearRutaBase('MIA', 'SCL', { aerolinea: 'LA', numeroBase: '701', duracionMinutos: 505, escalas: 0, precioBase: 760, equipaje: 35, horarios: ['06:10', '12:45', '20:20'] }),
-    crearRutaBase('MIA', 'EZE', { aerolinea: 'LA', numeroBase: '702', duracionMinutos: 530, escalas: 0, precioBase: 790, equipaje: 35, horarios: ['07:20', '13:50', '21:10'] }),
-    crearRutaBase('MIA', 'GRU', { aerolinea: 'AV', numeroBase: '310', duracionMinutos: 485, escalas: 1, precioBase: 740, equipaje: 30, horarios: ['06:45', '12:30', '19:40'] }),
-    crearRutaBase('MIA', 'LIM', { aerolinea: 'DH', numeroBase: '420', duracionMinutos: 360, escalas: 0, precioBase: 620, equipaje: 28, horarios: ['05:55', '12:40', '18:30'] }),
+    crearRutaBase('MIA', 'EZE', { aerolinea: 'SK', numeroBase: '702', duracionMinutos: 530, escalas: 0, precioBase: 790, equipaje: 35, horarios: ['07:20', '13:50', '21:10'] }),
+    crearRutaBase('MIA', 'GRU', { aerolinea: 'JS', numeroBase: '310', duracionMinutos: 485, escalas: 1, precioBase: 740, equipaje: 30, horarios: ['06:45', '12:30', '19:40'] }),
+    crearRutaBase('MIA', 'LIM', { aerolinea: 'AF', numeroBase: '420', duracionMinutos: 360, escalas: 0, precioBase: 620, equipaje: 28, horarios: ['05:55', '12:40', '18:30'] }),
     crearRutaBase('MIA', 'BOG', { aerolinea: 'LA', numeroBase: '505', duracionMinutos: 255, escalas: 0, precioBase: 450, equipaje: 30, horarios: ['06:30', '10:20', '17:55'] }),
-    crearRutaBase('MIA', 'MEX', { aerolinea: 'AV', numeroBase: '202', duracionMinutos: 235, escalas: 0, precioBase: 390, equipaje: 25, horarios: ['08:15', '13:45', '22:05'] }),
-    crearRutaBase('MIA', 'YYZ', { aerolinea: 'VB', numeroBase: '155', duracionMinutos: 205, escalas: 0, precioBase: 420, equipaje: 22, horarios: ['07:00', '15:25', '21:50'] }),
-    crearRutaBase('MIA', 'MAD', { aerolinea: 'LA', numeroBase: '506', duracionMinutos: 515, escalas: 0, precioBase: 820, equipaje: 35, horarios: ['09:30', '16:15', '23:10'] }),
-    crearRutaBase('MIA', 'CDG', { aerolinea: 'AV', numeroBase: '203', duracionMinutos: 555, escalas: 1, precioBase: 860, equipaje: 35, horarios: ['08:05', '14:55', '22:30'] }),
-    crearRutaBase('MIA', 'FCO', { aerolinea: 'Y4', numeroBase: '401', duracionMinutos: 590, escalas: 1, precioBase: 880, equipaje: 35, horarios: ['07:40', '13:30', '21:00'] }),
-    crearRutaBase('MIA', 'LHR', { aerolinea: 'LA', numeroBase: '507', duracionMinutos: 535, escalas: 0, precioBase: 840, equipaje: 35, horarios: ['09:15', '15:50', '22:40'] }),
+    crearRutaBase('MIA', 'MEX', { aerolinea: 'AA', numeroBase: '202', duracionMinutos: 235, escalas: 0, precioBase: 390, equipaje: 25, horarios: ['08:15', '13:45', '22:05'] }),
+    crearRutaBase('MIA', 'YYZ', { aerolinea: 'AF', numeroBase: '155', duracionMinutos: 205, escalas: 0, precioBase: 420, equipaje: 22, horarios: ['07:00', '15:25', '21:50'] }),
+    crearRutaBase('MIA', 'MAD', { aerolinea: 'IB', numeroBase: '506', duracionMinutos: 515, escalas: 0, precioBase: 820, equipaje: 35, horarios: ['09:30', '16:15', '23:10'] }),
+    crearRutaBase('MIA', 'CDG', { aerolinea: 'AF', numeroBase: '203', duracionMinutos: 555, escalas: 1, precioBase: 860, equipaje: 35, horarios: ['08:05', '14:55', '22:30'] }),
+    crearRutaBase('MIA', 'FCO', { aerolinea: 'IB', numeroBase: '401', duracionMinutos: 590, escalas: 1, precioBase: 880, equipaje: 35, horarios: ['07:40', '13:30', '21:00'] }),
+    crearRutaBase('MIA', 'LHR', { aerolinea: 'AA', numeroBase: '507', duracionMinutos: 535, escalas: 0, precioBase: 840, equipaje: 35, horarios: ['09:15', '15:50', '22:40'] }),
     crearRutaBase('MIA', 'FRA', { aerolinea: 'DH', numeroBase: '321', duracionMinutos: 540, escalas: 1, precioBase: 830, equipaje: 35, horarios: ['06:50', '12:25', '20:35'] }),
     crearRutaBase('MIA', 'SYD', { aerolinea: 'VB', numeroBase: '902', duracionMinutos: 1100, escalas: 2, precioBase: 1490, equipaje: 45, horarios: ['07:15', '12:55', '19:40'] }),
     crearRutaBase('MIA', 'HND', { aerolinea: 'AV', numeroBase: '801', duracionMinutos: 1000, escalas: 1, precioBase: 1380, equipaje: 45, horarios: ['08:25', '14:10', '22:00'] }),
@@ -263,7 +266,8 @@ function filtrarVuelos(vuelos, filtros) {
         if (!filtros.escalas.includes(vuelo.escalas)) return false;
         const parteDia = obtenerParteDia(vuelo.salida);
         if (!filtros.horarios.includes(parteDia)) return false;
-        return true;
+        const aerolineaValida = !filtros.aerolineas || filtros.aerolineas.length === 0 || filtros.aerolineas.includes(vuelo.aerolinea);
+        return precioTotal <= filtros.precioMaximo && filtros.escalas.includes(vuelo.escalas) && filtros.horarios.includes(parteDia) && aerolineaValida;
     });
 }
 
