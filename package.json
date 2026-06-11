@@ -1,0 +1,9 @@
+{
+  "name": "reserva-vuelos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicación web de reserva de vuelos enfocada en UX y Design Thinking.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
