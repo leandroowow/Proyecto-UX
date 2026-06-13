@@ -864,12 +864,12 @@ function inicializarConfirmacion() {
     document.getElementById('confirmNombre').textContent = pasajero.nombre;
     document.getElementById('confirmCorreo').textContent = pasajero.correo;
     document.getElementById('confirmTelefono').textContent = formatearTelefono(pasajero.telefono);
-    
+
     // Desglose de precios
-    document.getElementById('confirmTarifa').textContent = `$${vuelo.precioBase}`;
-    document.getElementById('confirmImpuestos').textContent = `$${vuelo.impuestos}`;
-    document.getElementById('confirmEquipaje').textContent = `$${vuelo.equipaje}`;
-    document.getElementById('confirmTotal').textContent = `$${reserva.total}`;
+    document.getElementById('precioBse').textContent  = `$${vuelo.precioBase}`;
+    document.getElementById('impuestos').textContent  = `$${vuelo.impuestos}`;
+    document.getElementById('equipaje').textContent   = `$${vuelo.equipaje}`;
+    document.getElementById('totalPrice').textContent = `$${reserva.total}`;
 
     const copyCodeBtn = document.getElementById('copyCodeBtn');
     if (copyCodeBtn) {
