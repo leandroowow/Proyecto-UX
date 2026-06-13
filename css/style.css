@@ -772,3 +772,122 @@ footer {
         transform: translateX(0);
     }
 }
+/* ============================================
+   DARK MODE
+   ============================================ */
+body.dark-mode {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode .navbar {
+    background-color: #1e293b !important;
+    border-color: #334155;
+}
+
+body.dark-mode .navbar-brand {
+    color: #93c5fd !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .modal-content {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-header {
+    background-color: #0f172a;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #64748b;
+}
+
+body.dark-mode .airport-suggestions {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .airport-suggestion:hover {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+body.dark-mode .airport-suggestion-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .flight-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .flight-card:hover {
+    border-color: var(--primary-light);
+}
+
+body.dark-mode .flight-scales {
+    background-color: #0f172a;
+}
+
+body.dark-mode .price-breakdown {
+    background-color: #0f172a;
+}
+
+body.dark-mode .info-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .info-section,
+body.dark-mode .search-section,
+body.dark-mode .reservas-section {
+    background-color: #0f172a !important;
+}
+
+body.dark-mode .table {
+    color: #e2e8f0;
+}
+
+body.dark-mode .table thead th {
+    color: #94a3b8;
+}
+
+body.dark-mode .alert-info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+}
+
+body.dark-mode .text-muted {
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .booking-code {
+    background-color: #0f172a;
+}
+
+body.dark-mode footer {
+    background-color: #020617 !important;
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+body.dark-mode .search-card {
+    background-color: #1e293b;
+}

@@ -816,7 +816,32 @@ function inicializarReserva() {
         });
     }
 }
+// Dark Mode
+function inicializarDarkMode() {
+    const btn = document.getElementById('darkModeBtn');
+    if (!btn) return;
 
+    const guardado = localStorage.getItem('darkMode') === 'true';
+    if (guardado) {
+        document.body.classList.add('dark-mode');
+        btn.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    btn.addEventListener('click', function () {
+        const activo = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', activo);
+        btn.innerHTML = activo
+            ? '<i class="fas fa-sun"></i>'
+            : '<i class="fas fa-moon"></i>';
+    });
+}
+// Aplica dark mode guardado en todas las páginas
+document.addEventListener('DOMContentLoaded', function () {
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+});
+document.addEventListener('DOMContentLoaded', inicializarDarkMode);
 /**
  * Inicializa la página de confirmación
  */
