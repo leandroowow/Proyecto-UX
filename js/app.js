@@ -184,7 +184,7 @@ function descargarPDFConfirmacion() {
 
 function inicializarElementosGlobales() {
     const anioActual = new Date().getFullYear();
-    document.querySelectorAll('[data-current-year]').forEach(elemento => {
+    document.querySelectorAll('[current-data-year]').forEach(elemento => {
         elemento.textContent = anioActual;
     });
 }
