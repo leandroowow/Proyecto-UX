@@ -190,58 +190,76 @@
             </div>
         </div>
     </section>
-<script src="js/chatbot.js"></script>
-    <!-- Mis Reservas -->
-    <!-- <section id="misReservas" class="reservas-section py-5">
-        <div class="container">
+
+    <!-- Promociones y Paquetes -->
+    <section class="packages-section py-5">
+        <div class="container py-4">
             <div class="row justify-content-center mb-4">
-                <div class="col-lg-10 text-center">
-                    <h3 class="fw-bold mb-2">Mis Reservas</h3>
-                    <p class="text-muted mb-0">Consulta reservas anteriores guardadas en tu navegador.</p>
+                <div class="col-lg-8 text-center">
+                    <span class="section-kicker">Promociones y Paquetes</span>
+                    <h2 class="fw-bold display-6 mt-2 mb-3">Escapadas diseñadas para reservar hoy</h2>
+                    <p class="text-muted mb-0">Combina vuelo, hotel y beneficios especiales con una experiencia visual moderna y directa.</p>
                 </div>
             </div>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card border-0 shadow-lg">
-                        <div class="card-body p-4 p-md-5">
-                            <div class="row g-3 align-items-end mb-4">
-                                <div class="col-md-8">
-                                    <label for="buscarReservaCodigo" class="form-label fw-bold">Buscar por código</label>
-                                    <input type="text" class="form-control form-control-lg" id="buscarReservaCodigo" placeholder="Ej: RV-2026-AB12CD">
-                                </div>
-                                <div class="col-md-4">
-                                    <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="limpiarBusquedaReservas">
-                                        Limpiar búsqueda
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Código</th>
-                                            <th>Fecha</th>
-                                            <th>Ruta</th>
-                                            <th>Aerolínea</th>
-                                            <th class="text-end">Precio</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="reservasHistoryBody">
-                                        <tr>
-                                            <td colspan="6" class="text-center text-muted py-4">No hay reservas guardadas todavía.</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-4">
+                    <article class="package-card h-100">
+                        <div class="package-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="Playa de Cancún" class="package-image">
+                            <span class="package-badge">Santiago → Cancún</span>
                         </div>
-                    </div>
+                        <div class="package-body">
+                            <h4 class="fw-bold mb-2">Cancún con hotel 4 estrellas</h4>
+                            <ul class="package-features mb-4">
+                                <li>Hotel 4 estrellas</li>
+                                <li>7 noches</li>
+                                <li>Desde $799 USD</li>
+                            </ul>
+                            <button class="btn btn-primary w-100 fw-bold" data-promo-route data-promo-origin="SCL" data-promo-destination="CUN">Reservar ahora</button>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-4">
+                    <article class="package-card h-100">
+                        <div class="package-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&w=1200&q=80" alt="Vista de Madrid" class="package-image">
+                            <span class="package-badge">Santiago → Madrid</span>
+                        </div>
+                        <div class="package-body">
+                            <h4 class="fw-bold mb-2">Madrid con experiencia premium</h4>
+                            <ul class="package-features mb-4">
+                                <li>Hotel incluido</li>
+                                <li>Desayuno incluido</li>
+                                <li>Desde $1.299 USD</li>
+                            </ul>
+                            <button class="btn btn-primary w-100 fw-bold" data-promo-route data-promo-origin="SCL" data-promo-destination="MAD">Reservar ahora</button>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-4">
+                    <article class="package-card h-100">
+                        <div class="package-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="Costa de Río de Janeiro" class="package-image">
+                            <span class="package-badge">Santiago → Río de Janeiro</span>
+                        </div>
+                        <div class="package-body">
+                            <h4 class="fw-bold mb-2">Río frente a la playa</h4>
+                            <ul class="package-features mb-4">
+                                <li>Hotel frente a la playa</li>
+                                <li>Desde $699 USD</li>
+                            </ul>
+                            <button class="btn btn-primary w-100 fw-bold" data-promo-route data-promo-origin="SCL" data-promo-destination="GIG">Reservar ahora</button>
+                        </div>
+                    </article>
                 </div>
             </div>
         </div>
     </section>
+
+<script src="js/chatbot.js"></script>
 
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-4">

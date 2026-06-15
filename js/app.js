@@ -25,8 +25,10 @@ function obtenerDuracionEnMinutos(duracion) {
     return horas * 60 + minutos;
 }
 
-function obtenerReservasGuardadas() {
-    return JSON.parse(localStorage.getItem('reservasVuelos') || '[]');
+function obtenerFechaFuturaISO(dias) {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() + dias);
+    return fecha.toISOString().split('T')[0];
 }
 
 function crearBotonLimpiarCampo(wrapper, input) {
@@ -109,50 +111,6 @@ function obtenerAerolineasSeleccionadas() {
     return seleccionadas;
 }
 
-function renderizarMisReservas(filtroCodigo = '') {
-    const contenedor = document.getElementById('reservasHistoryBody');
-
-    if (!contenedor) {
-        return;
-    }
-
-    const reservas = obtenerReservasGuardadas();
-    const filtro = filtroCodigo.trim().toLowerCase();
-    const reservasFiltradas = filtro ? reservas.filter(reserva => String(reserva.codigoReserva || '').toLowerCase().includes(filtro)) : reservas;
-
-    if (!reservasFiltradas.length) {
-        contenedor.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">${filtro ? 'No hay reservas que coincidan con la búsqueda.' : 'No hay reservas guardadas todavía.'}</td></tr>`;
-        return;
-    }
-
-    contenedor.innerHTML = reservasFiltradas.map(reserva => {
-        const vuelo = reserva.vuelo || {};
-        const fechaVuelo = vuelo.fecha ? formatearFecha(vuelo.fecha) : 'Sin fecha';
-
-        return `
-            <tr>
-                <td class="fw-bold">${reserva.codigoReserva || 'N/A'}</td>
-                <td>${fechaVuelo}</td>
-                <td>${formatearAeropuerto(vuelo.origen)} → ${formatearAeropuerto(vuelo.destino)}</td>
-                <td>${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}</td>
-                <td class="text-end">$${reserva.total || calcularPrecioTotal(vuelo) || 0}</td>
-                <td class="text-end"><button class="btn btn-outline-primary btn-sm" type="button" data-reserva-codigo="${reserva.codigoReserva}">Ver</button></td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function abrirReservaHistorica(codigoReserva) {
-    const reserva = obtenerReservasGuardadas().find(item => item.codigoReserva === codigoReserva);
-
-    if (!reserva) {
-        return;
-    }
-
-    sessionStorage.setItem('reservaActual', JSON.stringify(reserva));
-    window.location.href = 'confirmacion.html';
-}
-
 function descargarPDFConfirmacion() {
     const reserva = JSON.parse(sessionStorage.getItem('reservaActual') || 'null');
 
@@ -165,6 +123,7 @@ function descargarPDFConfirmacion() {
     const pdf = new jsPDF();
     const vuelo = reserva.vuelo;
     const pasajero = reserva.pasajero || {};
+        const claseNombre = reserva.claseNombre || obtenerClaseVuelo(reserva.claseVuelo || 'economica').nombre;
 
     pdf.setFontSize(18);
     pdf.text('ReservaVuelos - Confirmacion', 14, 20);
@@ -177,14 +136,15 @@ function descargarPDFConfirmacion() {
     pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 78);
     pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 86);
     pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 94);
-    pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 106);
+        pdf.text(`Clase: ${claseNombre}`, 14, 102);
+        pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 110);
 
     pdf.save(`confirmacion-${reserva.codigoReserva || 'reserva'}.pdf`);
 }
 
 function inicializarElementosGlobales() {
     const anioActual = new Date().getFullYear();
-    document.querySelectorAll('[current-data-year]').forEach(elemento => {
+    document.querySelectorAll('[data-current-year]').forEach(elemento => {
         elemento.textContent = anioActual;
     });
 }
@@ -383,6 +343,8 @@ document.addEventListener('DOMContentLoaded', function() {
         inicializarResultados();
     } else if (pathname.includes('reserva.html')) {
         inicializarReserva();
+    } else if (pathname.includes('pago.html')) {
+        inicializarPago();
     } else if (pathname.includes('confirmacion.html')) {
         inicializarConfirmacion();
     }
@@ -396,8 +358,6 @@ function inicializarHome() {
 
     const formBusqueda = document.getElementById('searchForm');
     const swapButton = document.getElementById('swapRouteBtn');
-    const searchReservas = document.getElementById('buscarReservaCodigo');
-    const limpiarBusquedaReservas = document.getElementById('limpiarBusquedaReservas');
     
     if (formBusqueda) {
         formBusqueda.addEventListener('submit', function(e) {
@@ -423,26 +383,36 @@ function inicializarHome() {
         });
     }
 
-    if (searchReservas) {
-        renderizarMisReservas(searchReservas.value);
-        searchReservas.addEventListener('input', function() {
-            renderizarMisReservas(this.value);
-        });
-    }
+    inicializarPromociones();
+}
 
-    if (limpiarBusquedaReservas && searchReservas) {
-        limpiarBusquedaReservas.addEventListener('click', function() {
-            searchReservas.value = '';
-            renderizarMisReservas('');
-            searchReservas.focus();
-        });
-    }
+function inicializarPromociones() {
+    document.querySelectorAll('[data-promo-route]').forEach(boton => {
+        boton.addEventListener('click', function() {
+            const origenIata = this.dataset.promoOrigin || 'SCL';
+            const destinoIata = this.dataset.promoDestination || '';
+            const origen = obtenerAeropuertoPorIata(origenIata);
+            const destino = obtenerAeropuertoPorIata(destinoIata);
 
-    document.addEventListener('click', function(e) {
-        const botonReserva = e.target.closest('[data-reserva-codigo]');
-        if (botonReserva) {
-            abrirReservaHistorica(botonReserva.getAttribute('data-reserva-codigo'));
-        }
+            if (!destino) {
+                return;
+            }
+
+            const fechaSalida = obtenerFechaFuturaISO(30);
+            const fechaRegreso = obtenerFechaFuturaISO(37);
+
+            sessionStorage.setItem('criteriosBusqueda', JSON.stringify({
+                origen: origenIata,
+                destino: destinoIata,
+                origenLabel: formatearAeropuerto(origen || origenIata),
+                destinoLabel: formatearAeropuerto(destino),
+                fechaSalida,
+                fechaRegreso,
+                pasajeros: '1'
+            }));
+
+            window.location.href = 'resultados.html';
+        });
     });
 }
 
@@ -815,6 +785,14 @@ function inicializarReserva() {
     }
     
     cargarVueloSeleccionado(vueloSelec);
+
+    const claseVueloSelect = document.getElementById('claseVuelo');
+    if (claseVueloSelect) {
+        claseVueloSelect.addEventListener('change', function() {
+            actualizarResumenVuelo(vueloSelec, this.value);
+            actualizarDetallesPrecios(vueloSelec, this.value);
+        });
+    }
     
     // Event listener para formulario
     const formulario = document.getElementById('reservaForm');
@@ -824,6 +802,135 @@ function inicializarReserva() {
             
             if (validarFormularioReserva()) {
                 completarReserva();
+            }
+        });
+    }
+}
+
+function inicializarPago() {
+    inicializarBotonesLimpiezaRapida();
+
+    const reserva = JSON.parse(sessionStorage.getItem('reservaActual') || 'null');
+    if (!reserva || !reserva.vuelo) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const vuelo = reserva.vuelo;
+    const clase = obtenerClaseVuelo(reserva.claseVuelo || 'economica');
+    const precioClase = reserva.totalPersona ? reserva.totalPersona - (reserva.impuestos || 0) : calcularPrecioClaseVuelo(vuelo.precioBase, reserva.claseVuelo || 'economica');
+    const total = reserva.total || 0;
+
+    const resumenPago = document.getElementById('resumenPago');
+    if (resumenPago) {
+        resumenPago.innerHTML = `
+            <div class="mb-3">
+                <small class="text-muted">Vuelo</small>
+                <p class="fw-bold mb-1">${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero}</p>
+            </div>
+            <div class="mb-3">
+                <small class="text-muted">Ruta</small>
+                <p class="fw-bold mb-1">${formatearAeropuerto(vuelo.origen)} → ${formatearAeropuerto(vuelo.destino)}</p>
+            </div>
+            <div class="mb-3">
+                <small class="text-muted">Clase</small>
+                <p class="fw-bold mb-1">${clase.nombre}</p>
+            </div>
+            <div class="mb-0">
+                <small class="text-muted">Total a pagar</small>
+                <p class="fw-bold text-primary mb-0 fs-4">${formatearMoneda(total)}</p>
+            </div>
+        `;
+    }
+
+    const resumenMetodo = document.getElementById('metodoSeleccionado');
+    const radiosMetodo = document.querySelectorAll('input[name="metodoPago"]');
+    const actualizarMetodo = () => {
+        const seleccionado = document.querySelector('input[name="metodoPago"]:checked');
+        if (resumenMetodo) {
+            resumenMetodo.textContent = seleccionado ? seleccionado.dataset.label || seleccionado.value : 'Selecciona una opción';
+        }
+    };
+
+    radiosMetodo.forEach(radio => radio.addEventListener('change', actualizarMetodo));
+    actualizarMetodo();
+
+    const detallesPago = document.getElementById('detallesPago');
+    if (detallesPago) {
+        detallesPago.innerHTML = `
+            <div class="d-flex justify-content-between mb-2">
+                <span>Tarifa base</span>
+                <strong>${formatearMoneda(vuelo.precioBase)}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Recargo por clase</span>
+                <strong>${formatearMoneda(precioClase - vuelo.precioBase)}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Impuestos</span>
+                <strong>${formatearMoneda(reserva.impuestos || 0)}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-0 pt-3 border-top border-2">
+                <span class="fw-bold">Total</span>
+                <strong class="text-primary">${formatearMoneda(total)}</strong>
+            </div>
+        `;
+    }
+
+    const beneficiosPago = document.getElementById('beneficiosPago');
+    if (beneficiosPago) {
+        beneficiosPago.innerHTML = clase.beneficios.map(beneficio => `<li>${beneficio}</li>`).join('');
+    }
+
+    const estadoPago = document.getElementById('estadoPago');
+    const formPago = document.getElementById('pagoForm');
+    const botonPago = document.getElementById('pagarBtn');
+
+    if (formPago) {
+        formPago.addEventListener('submit', function(evento) {
+            evento.preventDefault();
+
+            const metodoSeleccionado = document.querySelector('input[name="metodoPago"]:checked');
+            if (!metodoSeleccionado) {
+                if (estadoPago) {
+                    estadoPago.className = 'alert alert-warning';
+                    estadoPago.textContent = 'Selecciona un método de pago para continuar.';
+                }
+                return;
+            }
+
+            if (botonPago) {
+                botonPago.disabled = true;
+                botonPago.dataset.originalText = botonPago.innerHTML;
+                botonPago.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+            }
+
+            const exito = Math.random() < 0.8;
+
+            if (exito) {
+                reserva.codigoReserva = reserva.codigoReserva || generarCodigoReserva();
+                reserva.pagado = true;
+                sessionStorage.setItem('reservaActual', JSON.stringify(reserva));
+
+                if (estadoPago) {
+                    estadoPago.className = 'alert alert-success';
+                    estadoPago.textContent = 'Pago realizado con éxito';
+                }
+
+                window.setTimeout(() => {
+                    window.location.href = 'confirmacion.html';
+                }, 1200);
+                return;
+            }
+
+            if (estadoPago) {
+                estadoPago.className = 'alert alert-danger';
+                estadoPago.textContent = 'Error en la transacción. Intente nuevamente.';
+            }
+
+            if (botonPago) {
+                botonPago.disabled = false;
+                botonPago.innerHTML = botonPago.dataset.originalText || 'Pagar';
             }
         });
     }
@@ -869,9 +976,14 @@ function inicializarConfirmacion() {
     
     const vuelo = reserva.vuelo;
     const pasajero = reserva.pasajero;
+    const clase = obtenerClaseVuelo(reserva.claseVuelo || 'economica');
     
     // Código de reserva
-    document.getElementById('codigoReserva').textContent = reserva.codigoReserva || generarCodigoReserva();
+    if (!reserva.codigoReserva) {
+        reserva.codigoReserva = generarCodigoReserva();
+        sessionStorage.setItem('reservaActual', JSON.stringify(reserva));
+    }
+    document.getElementById('codigoReserva').textContent = reserva.codigoReserva;
     
     // Resumen del vuelo
     const summaryVuelo = `
@@ -892,6 +1004,14 @@ function inicializarConfirmacion() {
                 <small class="text-muted">Duración</small>
                 <p class="fw-bold">${vuelo.duracion}</p>
             </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted">Clase</small>
+                <p class="fw-bold">${reserva.claseNombre || clase.nombre}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted">Equipaje</small>
+                <p class="fw-bold">${reserva.equipajePermitido || clase.equipaje}</p>
+            </div>
         </div>
     `;
     
@@ -902,11 +1022,37 @@ function inicializarConfirmacion() {
     document.getElementById('confirmCorreo').textContent = pasajero.correo;
     document.getElementById('confirmTelefono').textContent = formatearTelefono(pasajero.telefono);
 
+    const beneficiosClase = document.getElementById('beneficiosClaseConfirm');
+    if (beneficiosClase) {
+        beneficiosClase.innerHTML = (reserva.beneficiosClase || clase.beneficios).map(beneficio => `<li>${beneficio}</li>`).join('');
+    }
+
     // Desglose de precios
-    document.getElementById('precioBse').textContent  = `$${vuelo.precioBase}`;
-    document.getElementById('impuestos').textContent  = `$${vuelo.impuestos}`;
-    document.getElementById('equipaje').textContent   = `$${vuelo.equipaje}`;
-    document.getElementById('totalPrice').textContent = `$${reserva.total}`;
+    const precioBase = document.getElementById('precioBaseConfirm');
+    const recargoClase = document.getElementById('recargoClaseConfirm');
+    const impuestos = document.getElementById('impuestosConfirm');
+    const equipaje = document.getElementById('equipajeConfirm');
+    const totalPrice = document.getElementById('totalPrice');
+
+    if (precioBase) {
+        precioBase.textContent = formatearMoneda(vuelo.precioBase);
+    }
+
+    if (recargoClase) {
+        recargoClase.textContent = formatearMoneda(reserva.recargoClase || 0);
+    }
+
+    if (impuestos) {
+        impuestos.textContent = formatearMoneda(reserva.impuestos || vuelo.impuestos || 0);
+    }
+
+    if (equipaje) {
+        equipaje.textContent = reserva.equipajePermitido || clase.equipaje;
+    }
+
+    if (totalPrice) {
+        totalPrice.textContent = formatearMoneda(reserva.total || 0);
+    }
 
     const copyCodeBtn = document.getElementById('copyCodeBtn');
     if (copyCodeBtn) {
