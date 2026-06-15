@@ -28,10 +28,12 @@ const aeropuertos = [
     { iata: 'MEX', ciudad: 'Ciudad de México',pais: 'México',         aeropuerto: 'Aeropuerto Internacional Benito Juárez',         aliases: ['ciudad de mexico', 'cdmx', 'benito juarez', 'mexico'] },
     { iata: 'YYZ', ciudad: 'Toronto',         pais: 'Canadá',         aeropuerto: 'Toronto Pearson International Airport',          aliases: ['toronto', 'pearson', 'canada'] },
     { iata: 'MAD', ciudad: 'Madrid',          pais: 'España',         aeropuerto: 'Aeropuerto Adolfo Suárez Madrid-Barajas',        aliases: ['madrid', 'barajas', 'espana'] },
+    { iata: 'CUN', ciudad: 'Cancún',          pais: 'México',         aeropuerto: 'Aeropuerto Internacional de Cancún',             aliases: ['cancun', 'riviera maya', 'quintana roo', 'mexico'] },
     { iata: 'CDG', ciudad: 'París',           pais: 'Francia',        aeropuerto: 'Aeropuerto Charles de Gaulle',                   aliases: ['paris', 'charles de gaulle', 'francia'] },
     { iata: 'FCO', ciudad: 'Roma',            pais: 'Italia',         aeropuerto: 'Aeropuerto de Fiumicino',                        aliases: ['roma', 'fiumicino', 'italia'] },
     { iata: 'LHR', ciudad: 'Londres',         pais: 'Reino Unido',    aeropuerto: 'Heathrow Airport',                               aliases: ['londres', 'heathrow', 'united kingdom', 'uk'] },
     { iata: 'FRA', ciudad: 'Frankfurt',       pais: 'Alemania',       aeropuerto: 'Frankfurt Airport',                              aliases: ['frankfurt', 'alemania', 'germany'] },
+    { iata: 'GIG', ciudad: 'Río de Janeiro',  pais: 'Brasil',         aeropuerto: 'Aeropuerto Internacional Galeão',                aliases: ['rio de janeiro', 'rio', 'galeao', 'brasil'] },
     { iata: 'SYD', ciudad: 'Sídney',          pais: 'Australia',      aeropuerto: 'Sydney Kingsford Smith Airport',                 aliases: ['sydney', 'sidney', 'australia'] },
     { iata: 'HND', ciudad: 'Tokio',           pais: 'Japón',          aeropuerto: 'Tokyo Haneda Airport',                           aliases: ['tokio', 'tokyo', 'haneda', 'japon', 'japan'] },
     { iata: 'CCS', ciudad: 'Caracas',         pais: 'Venezuela',      aeropuerto: 'Simón Bolívar',                                  aliases: ['caracas', 'venezuela'] }
@@ -40,6 +42,54 @@ const aeropuertos = [
 const ciudades = Object.fromEntries(
     aeropuertos.map(a => [a.iata, `${a.ciudad}, ${a.pais}`])
 );
+
+const clasesVuelo = {
+    economica: {
+        codigo: 'economica',
+        nombre: 'Económica',
+        incremento: 0,
+        equipaje: '1 maleta incluida',
+        beneficios: ['Precio base', 'Asiento estándar']
+    },
+    premiumEconomy: {
+        codigo: 'premiumEconomy',
+        nombre: 'Premium Economy',
+        incremento: 0.2,
+        equipaje: '2 maletas incluidas',
+        beneficios: ['+20% sobre el precio base', 'Mayor espacio para piernas']
+    },
+    business: {
+        codigo: 'business',
+        nombre: 'Ejecutiva / Business',
+        incremento: 0.5,
+        equipaje: '2 maletas incluidas',
+        beneficios: ['+50% sobre el precio base', 'Acceso a Sala VIP', 'Embarque prioritario']
+    },
+    primeraClase: {
+        codigo: 'primeraClase',
+        nombre: 'Primera Clase',
+        incremento: 1,
+        equipaje: '3 maletas incluidas',
+        beneficios: ['+100% sobre el precio base', 'Sala VIP', 'Embarque prioritario', 'Servicio premium']
+    }
+};
+
+function obtenerClaseVuelo(codigo = 'economica') {
+    return clasesVuelo[codigo] || clasesVuelo.economica;
+}
+
+function calcularPrecioClaseVuelo(precioBase, codigoClase = 'economica') {
+    const clase = obtenerClaseVuelo(codigoClase);
+    return Math.round(Number(precioBase || 0) * (1 + clase.incremento));
+}
+
+function obtenerBeneficiosClaseVuelo(codigoClase = 'economica') {
+    return obtenerClaseVuelo(codigoClase).beneficios.slice();
+}
+
+function formatearMoneda(valor) {
+    return `$${Number(valor || 0).toLocaleString('es-CL')}`;
+}
 
 // ─── Utilidades de fecha y hora ───────────────────────────────────────────────
 
@@ -191,10 +241,12 @@ const destinosDestacados = [
     { iata: 'MEX', duracionMinutos: 185,  precioBase: 390,  escalas: 0, equipaje: 23, horarios: ['08:15', '13:45', '22:05'] },
     { iata: 'YYZ', duracionMinutos: 210,  precioBase: 430,  escalas: 0, equipaje: 24, horarios: ['07:00', '15:25', '21:50'] },
     { iata: 'MAD', duracionMinutos: 515,  precioBase: 760,  escalas: 0, equipaje: 30, horarios: ['09:30', '16:15', '23:10'] },
+    { iata: 'CUN', duracionMinutos: 470,  precioBase: 880,  escalas: 1, equipaje: 32, horarios: ['08:50', '15:05', '22:20'] },
     { iata: 'CDG', duracionMinutos: 575,  precioBase: 820,  escalas: 0, equipaje: 32, horarios: ['08:05', '14:55', '22:30'] },
     { iata: 'FCO', duracionMinutos: 590,  precioBase: 800,  escalas: 0, equipaje: 31, horarios: ['07:40', '13:30', '21:00'] },
     { iata: 'LHR', duracionMinutos: 580,  precioBase: 830,  escalas: 0, equipaje: 32, horarios: ['09:15', '15:50', '22:40'] },
     { iata: 'FRA', duracionMinutos: 560,  precioBase: 810,  escalas: 0, equipaje: 32, horarios: ['06:50', '12:25', '20:35'] },
+    { iata: 'GIG', duracionMinutos: 315,  precioBase: 560,  escalas: 0, equipaje: 24, horarios: ['07:25', '13:45', '19:20'] },
     { iata: 'SYD', duracionMinutos: 1035, precioBase: 1450, escalas: 1, equipaje: 35, horarios: ['07:15', '12:55', '19:40'] },
     { iata: 'HND', duracionMinutos: 870,  precioBase: 1320, escalas: 1, equipaje: 34, horarios: ['08:25', '14:10', '22:00'] },
     { iata: 'CCS', duracionMinutos: 210,  precioBase: 360,  escalas: 0, equipaje: 22, horarios: ['06:20', '12:15', '18:50'] },

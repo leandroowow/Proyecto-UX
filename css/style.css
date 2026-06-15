@@ -270,6 +270,177 @@ small {
     box-shadow: var(--shadow-lg);
 }
 
+.packages-section {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(30, 58, 138, 0.08);
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.package-card {
+    background: #ffffff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.package-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 35px rgba(15, 23, 42, 0.14);
+}
+
+.package-image-wrap {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+}
+
+.package-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.package-card:hover .package-image {
+    transform: scale(1.05);
+}
+
+.package-image-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.38) 100%);
+}
+
+.package-badge {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    z-index: 2;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #0f172a;
+    font-size: 0.85rem;
+    font-weight: 700;
+    backdrop-filter: blur(12px);
+}
+
+.package-body {
+    padding: 1.5rem;
+}
+
+.package-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.package-features li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--secondary-color);
+}
+
+.package-features li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    color: var(--success-color);
+}
+
+.class-benefits-card {
+    padding: 1.25rem;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.06));
+    border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.benefits-list {
+    list-style: none;
+    padding-left: 0;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.benefits-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: #1e293b;
+}
+
+.payment-card,
+.payment-summary-card {
+    border-radius: 22px;
+}
+
+.payment-option {
+    display: block;
+    cursor: pointer;
+}
+
+.payment-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.payment-option-card {
+    min-height: 100%;
+    border: 2px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.payment-option:hover .payment-option-card,
+.payment-radio:focus-visible + .payment-option-card {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.payment-radio:checked + .payment-option-card {
+    border-color: var(--primary-color);
+    background: rgba(30, 58, 138, 0.05);
+}
+
+.payment-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(30, 58, 138, 0.08);
+    color: var(--primary-color);
+    font-size: 1.05rem;
+}
+
+.payment-benefits {
+    color: var(--secondary-color);
+}
+
 .info-icon {
     display: inline-block;
     animation: float 3s ease-in-out infinite;
@@ -850,6 +1021,35 @@ body.dark-mode .price-breakdown {
 body.dark-mode .info-card {
     background-color: #1e293b;
     border-color: #334155;
+}
+
+body.dark-mode .package-card,
+body.dark-mode .payment-card,
+body.dark-mode .payment-summary-card,
+body.dark-mode .class-benefits-card {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .package-features li,
+body.dark-mode .benefits-list li,
+body.dark-mode .payment-benefits {
+    color: #cbd5e1;
+}
+
+body.dark-mode .package-badge {
+    background: rgba(15, 23, 42, 0.9);
+    color: #e2e8f0;
+}
+
+body.dark-mode .payment-option-card {
+    background-color: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-mode .payment-radio:checked + .payment-option-card {
+    background: rgba(59, 130, 246, 0.12);
 }
 
 body.dark-mode .info-section,

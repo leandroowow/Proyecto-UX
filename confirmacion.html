@@ -35,6 +35,11 @@
                     <div class="step-line active"></div>
                     <div class="step completed">
                         <span class="step-number">3</span>
+                        <span class="step-label">Pago</span>
+                    </div>
+                    <div class="step-line active"></div>
+                    <div class="step completed">
+                        <span class="step-number">4</span>
                         <span class="step-label">Confirmar</span>
                     </div>
                 </div>
@@ -96,6 +101,15 @@
                                 </div>
                             </div>
 
+                            <div class="mb-5">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="fas fa-gem"></i> Beneficios de la clase
+                                </h6>
+                                <ul id="beneficiosClaseConfirm" class="benefits-list mb-0">
+                                    <!-- Cargado por JS -->
+                                </ul>
+                            </div>
+
                             <!-- Passenger Info -->
                             <div class="mb-5">
                                 <h6 class="fw-bold text-primary mb-3">
@@ -126,15 +140,19 @@
                                 <div class="col-md-6">
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Tarifa base:</span>
-                                        <span id="precioBse" class="fw-bold">$0</span>
+                                        <span id="precioBaseConfirm" class="fw-bold">$0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Recargo por clase:</span>
+                                        <span id="recargoClaseConfirm" class="fw-bold">$0</span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Impuestos:</span>
-                                        <span id="impuestos" class="fw-bold">$0</span>
+                                        <span id="impuestosConfirm" class="fw-bold">$0</span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span>Equipaje:</span>
-                                        <span id="equipaje" class="fw-bold">$0</span>
+                                        <span>Equipaje permitido:</span>
+                                        <span id="equipajeConfirm" class="fw-bold">1 maleta incluida</span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

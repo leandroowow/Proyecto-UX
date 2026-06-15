@@ -11,10 +11,43 @@ let reservaActual = {
         correo: '',
         telefono: ''
     },
+    claseVuelo: 'economica',
+    claseNombre: 'Económica',
+    beneficiosClase: [],
+    equipajePermitido: '1 maleta incluida',
+    recargoClase: 0,
+    impuestos: 0,
+    totalPersona: 0,
     total: 0,
     codigoReserva: '',
     fecha: new Date().toISOString()
 };
+
+function obtenerCriteriosBusquedaActuales() {
+    return JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
+}
+
+function obtenerClaseSeleccionada() {
+    const selector = document.getElementById('claseVuelo');
+    return selector ? selector.value : 'economica';
+}
+
+function renderizarBeneficiosClase(clase, contenedorId = 'beneficiosClase') {
+    const contenedor = document.getElementById(contenedorId);
+    if (!contenedor || !clase) {
+        return;
+    }
+
+    contenedor.innerHTML = `
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">${clase.nombre}</span>
+            <span class="badge bg-light text-dark border">${clase.equipaje}</span>
+        </div>
+        <ul class="benefits-list mb-0">
+            ${clase.beneficios.map(beneficio => `<li><i class="fas fa-check text-success me-2"></i>${beneficio}</li>`).join('')}
+        </ul>
+    `;
+}
 
 /**
  * Valida el nombre completo
@@ -157,65 +190,114 @@ function validarFormularioReserva() {
  */
 function cargarVueloSeleccionado(vuelo) {
     reservaActual.vuelo = vuelo;
-    
-    // Actualiza el resumen del vuelo en la página
+
+    const claseSeleccionada = obtenerClaseSeleccionada();
+    actualizarResumenVuelo(vuelo, claseSeleccionada);
+    actualizarDetallesPrecios(vuelo, claseSeleccionada);
+}
+function actualizarResumenVuelo(vuelo, claseCodigo) {
+    const clase = obtenerClaseVuelo(claseCodigo);
     const summary = `
-        <div class="mb-2">
+        <div class="mb-3">
             <small class="text-muted">Vuelo</small>
             <p class="fw-bold mb-1">${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero}</p>
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
             <small class="text-muted">Ruta</small>
             <p class="fw-bold mb-1">${obtenerNombreCiudad(vuelo.origen)} → ${obtenerNombreCiudad(vuelo.destino)}</p>
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
             <small class="text-muted">Horario</small>
             <p class="fw-bold mb-1">${vuelo.salida} - ${vuelo.llegada}</p>
         </div>
-        <div>
+        <div class="mb-3">
             <small class="text-muted">Duración</small>
-            <p class="fw-bold">${vuelo.duracion} (${vuelo.escalas === 0 ? 'Directo' : vuelo.escalas + ' escalas'})</p>
+            <p class="fw-bold mb-1">${vuelo.duracion} (${vuelo.escalas === 0 ? 'Directo' : vuelo.escalas + ' escalas'})</p>
+        </div>
+        <div>
+            <small class="text-muted">Clase seleccionada</small>
+            <p class="fw-bold mb-0">${clase.nombre}</p>
         </div>
     `;
-    
-    if (document.getElementById('summaryVuelo')) {
-        document.getElementById('summaryVuelo').innerHTML = summary;
-    }
-    
-    // Actualiza detalles de precios
-    actualizarDetallesPrecios(vuelo);
-}
-function actualizarDetallesPrecios(vuelo) {
-    const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
-    const pasajeros = parseInt(criterios.pasajeros) || 1;
 
-    const precioBase = vuelo.precioBase;
-    const impuestos  = vuelo.impuestos;
-    const equipaje   = vuelo.equipaje;
-    const totalPersona = precioBase + impuestos + equipaje;
+    const summaryElement = document.getElementById('summaryVuelo');
+    if (summaryElement) {
+        summaryElement.innerHTML = summary;
+    }
+
+    const claseNombreResumen = document.getElementById('claseNombreResumen');
+    if (claseNombreResumen) {
+        claseNombreResumen.textContent = clase.nombre;
+    }
+
+    renderizarBeneficiosClase(clase);
+}
+
+function actualizarDetallesPrecios(vuelo, claseCodigo) {
+    const criterios = obtenerCriteriosBusquedaActuales();
+    const pasajeros = parseInt(criterios.pasajeros) || 1;
+    const clase = obtenerClaseVuelo(claseCodigo);
+    const precioBase = Number(vuelo.precioBase || 0);
+    const precioClase = calcularPrecioClaseVuelo(precioBase, claseCodigo);
+    const recargoClase = precioClase - precioBase;
+    const impuestos = Math.round(precioClase * 0.12);
+    const totalPersona = precioClase + impuestos;
     const total = totalPersona * pasajeros;
 
-    document.getElementById('precioBse').textContent  = `$${precioBase}`;
-    document.getElementById('impuestos').textContent  = `$${impuestos}`;
-    document.getElementById('equipaje').textContent   = `$${equipaje}`;
-    document.getElementById('totalPrice').textContent = `$${total}`;
+    const precioBaseElement = document.getElementById('precioBase');
+    const recargoClaseElement = document.getElementById('recargoClase');
+    const impuestosElement = document.getElementById('impuestos');
+    const equipajeElement = document.getElementById('equipaje');
+    const totalElement = document.getElementById('totalPrice');
+    const pasajerosElement = document.getElementById('filaPasajeros');
 
-    // Agrega fila de pasajeros si hay más de 1
-    const breakdown = document.querySelector('.price-breakdown');
-    const yaExiste = document.getElementById('filaPasajeros');
-    if (!yaExiste && pasajeros > 1) {
-        const fila = document.createElement('div');
-        fila.id = 'filaPasajeros';
-        fila.className = 'd-flex justify-content-between mb-2';
-        fila.innerHTML = `
-            <span>Pasajeros:</span>
-            <span class="fw-bold">${pasajeros} x $${totalPersona}</span>
-        `;
-        // Inserta antes del total
-        const filaTotal = breakdown.querySelector('.border-top');
-        breakdown.insertBefore(fila, filaTotal);
+    if (precioBaseElement) {
+        precioBaseElement.textContent = formatearMoneda(precioBase);
     }
 
+    if (recargoClaseElement) {
+        recargoClaseElement.textContent = recargoClase > 0 ? `+ ${formatearMoneda(recargoClase)}` : formatearMoneda(0);
+    }
+
+    if (impuestosElement) {
+        impuestosElement.textContent = formatearMoneda(impuestos);
+    }
+
+    if (equipajeElement) {
+        equipajeElement.textContent = clase.equipaje;
+    }
+
+    if (totalElement) {
+        totalElement.textContent = formatearMoneda(total);
+    }
+
+    const breakdown = document.querySelector('.price-breakdown');
+    const filaTotal = breakdown ? breakdown.querySelector('.border-top') : null;
+
+    if (breakdown) {
+        if (pasajerosElement) {
+            pasajerosElement.remove();
+        }
+
+        if (pasajeros > 1 && filaTotal) {
+            const fila = document.createElement('div');
+            fila.id = 'filaPasajeros';
+            fila.className = 'd-flex justify-content-between mb-2';
+            fila.innerHTML = `
+                <span>Pasajeros:</span>
+                <span class="fw-bold">${pasajeros} x ${formatearMoneda(totalPersona)}</span>
+            `;
+            breakdown.insertBefore(fila, filaTotal);
+        }
+    }
+
+    reservaActual.claseVuelo = claseCodigo;
+    reservaActual.claseNombre = clase.nombre;
+    reservaActual.beneficiosClase = clase.beneficios.slice();
+    reservaActual.equipajePermitido = clase.equipaje;
+    reservaActual.recargoClase = recargoClase;
+    reservaActual.impuestos = impuestos;
+    reservaActual.totalPersona = totalPersona;
     reservaActual.total = total;
 }
 /**
@@ -232,65 +314,9 @@ function guardarDatosPasajero() {
  */
 function completarReserva() {
     guardarDatosPasajero();
-    
-    // Genera código de reserva
-    reservaActual.codigoReserva = generarCodigoReserva();
-    
-    // Guarda en LocalStorage
-    const reservas = obtenerReservas();
-    reservas.push(reservaActual);
-    localStorage.setItem('reservasVuelos', JSON.stringify(reservas));
-    
-    // Guarda la reserva actual en sesión para la página de confirmación
+    reservaActual.codigoReserva = '';
     sessionStorage.setItem('reservaActual', JSON.stringify(reservaActual));
-    
-    // Redirige a confirmación
-    window.location.href = 'confirmacion.html';
-}
-
-/**
- * Obtiene todas las reservas del usuario
- * @returns {array} Array de reservas
- */
-function obtenerReservas() {
-    const reservas = localStorage.getItem('reservasVuelos');
-    return reservas ? JSON.parse(reservas) : [];
-}
-
-/**
- * Obtiene una reserva específica por código
- * @param {string} codigo - Código de reserva
- * @returns {object|null} La reserva o null si no existe
- */
-function obtenerReserva(codigo) {
-    const reservas = obtenerReservas();
-    return reservas.find(r => r.codigoReserva === codigo) || null;
-}
-
-/**
- * Cancela una reserva
- * @param {string} codigo - Código de reserva
- * @returns {boolean} True si se canceló exitosamente
- */
-function cancelarReserva(codigo) {
-    let reservas = obtenerReservas();
-    const indice = reservas.findIndex(r => r.codigoReserva === codigo);
-    
-    if (indice !== -1) {
-        reservas.splice(indice, 1);
-        localStorage.setItem('reservasVuelos', JSON.stringify(reservas));
-        return true;
-    }
-    
-    return false;
-}
-
-/**
- * Obtiene el número de reservas activas
- * @returns {number} Total de reservas
- */
-function obtenerTotalReservas() {
-    return obtenerReservas().length;
+    window.location.href = 'pago.html';
 }
 
 /**
@@ -304,6 +330,13 @@ function limpiarReservaActual() {
             correo: '',
             telefono: ''
         },
+        claseVuelo: 'economica',
+        claseNombre: 'Económica',
+        beneficiosClase: [],
+        equipajePermitido: '1 maleta incluida',
+        recargoClase: 0,
+        impuestos: 0,
+        totalPersona: 0,
         total: 0,
         codigoReserva: '',
         fecha: new Date().toISOString()
