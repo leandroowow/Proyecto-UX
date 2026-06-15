@@ -184,49 +184,81 @@ function crearRutaBase(origen, destino, config) {
 }
 
 const destinosDestacados = [
-    { iata: 'SCL', duracionMinutos: 615, precioBase: 690, escalas: 0, equipaje: 32, horarios: ['06:10', '11:35', '19:45'] },
-    { iata: 'EZE', duracionMinutos: 560, precioBase: 650, escalas: 0, equipaje: 30, horarios: ['07:20', '13:10', '20:25'] },
-    { iata: 'GRU', duracionMinutos: 510, precioBase: 620, escalas: 1, equipaje: 28, horarios: ['06:45', '14:00', '21:10'] },
-    { iata: 'LIM', duracionMinutos: 375, precioBase: 540, escalas: 0, equipaje: 25, horarios: ['05:55', '12:40', '18:30'] },
-    { iata: 'BOG', duracionMinutos: 255, precioBase: 420, escalas: 0, equipaje: 25, horarios: ['06:30', '10:20', '17:55'] },
-    { iata: 'MEX', duracionMinutos: 185, precioBase: 390, escalas: 0, equipaje: 23, horarios: ['08:15', '13:45', '22:05'] },
-    { iata: 'YYZ', duracionMinutos: 210, precioBase: 430, escalas: 0, equipaje: 24, horarios: ['07:00', '15:25', '21:50'] },
-    { iata: 'MAD', duracionMinutos: 515, precioBase: 760, escalas: 0, equipaje: 30, horarios: ['09:30', '16:15', '23:10'] },
-    { iata: 'CDG', duracionMinutos: 575, precioBase: 820, escalas: 0, equipaje: 32, horarios: ['08:05', '14:55', '22:30'] },
-    { iata: 'FCO', duracionMinutos: 590, precioBase: 800, escalas: 0, equipaje: 31, horarios: ['07:40', '13:30', '21:00'] },
-    { iata: 'LHR', duracionMinutos: 580, precioBase: 830, escalas: 0, equipaje: 32, horarios: ['09:15', '15:50', '22:40'] },
-    { iata: 'FRA', duracionMinutos: 560, precioBase: 810, escalas: 0, equipaje: 32, horarios: ['06:50', '12:25', '20:35'] },
+    { iata: 'EZE', duracionMinutos: 560,  precioBase: 650,  escalas: 0, equipaje: 30, horarios: ['07:20', '13:10', '20:25'] },
+    { iata: 'GRU', duracionMinutos: 510,  precioBase: 620,  escalas: 1, equipaje: 28, horarios: ['06:45', '14:00', '21:10'] },
+    { iata: 'LIM', duracionMinutos: 375,  precioBase: 540,  escalas: 0, equipaje: 25, horarios: ['05:55', '12:40', '18:30'] },
+    { iata: 'BOG', duracionMinutos: 255,  precioBase: 420,  escalas: 0, equipaje: 25, horarios: ['06:30', '10:20', '17:55'] },
+    { iata: 'MEX', duracionMinutos: 185,  precioBase: 390,  escalas: 0, equipaje: 23, horarios: ['08:15', '13:45', '22:05'] },
+    { iata: 'YYZ', duracionMinutos: 210,  precioBase: 430,  escalas: 0, equipaje: 24, horarios: ['07:00', '15:25', '21:50'] },
+    { iata: 'MAD', duracionMinutos: 515,  precioBase: 760,  escalas: 0, equipaje: 30, horarios: ['09:30', '16:15', '23:10'] },
+    { iata: 'CDG', duracionMinutos: 575,  precioBase: 820,  escalas: 0, equipaje: 32, horarios: ['08:05', '14:55', '22:30'] },
+    { iata: 'FCO', duracionMinutos: 590,  precioBase: 800,  escalas: 0, equipaje: 31, horarios: ['07:40', '13:30', '21:00'] },
+    { iata: 'LHR', duracionMinutos: 580,  precioBase: 830,  escalas: 0, equipaje: 32, horarios: ['09:15', '15:50', '22:40'] },
+    { iata: 'FRA', duracionMinutos: 560,  precioBase: 810,  escalas: 0, equipaje: 32, horarios: ['06:50', '12:25', '20:35'] },
     { iata: 'SYD', duracionMinutos: 1035, precioBase: 1450, escalas: 1, equipaje: 35, horarios: ['07:15', '12:55', '19:40'] },
     { iata: 'HND', duracionMinutos: 870,  precioBase: 1320, escalas: 1, equipaje: 34, horarios: ['08:25', '14:10', '22:00'] },
-    { iata: 'CCS', duracionMinutos: 210,  precioBase: 360,  escalas: 0, equipaje: 22, horarios: ['06:20', '12:15', '18:50'] }
+    { iata: 'CCS', duracionMinutos: 210,  precioBase: 360,  escalas: 0, equipaje: 22, horarios: ['06:20', '12:15', '18:50'] },
+    { iata: 'MIA', duracionMinutos: 615,  precioBase: 690,  escalas: 0, equipaje: 32, horarios: ['06:10', '11:35', '19:45'] },
+    { iata: 'NYC', duracionMinutos: 720,  precioBase: 750,  escalas: 1, equipaje: 30, horarios: ['07:30', '14:20', '21:00'] },
 ];
 
-const rutasBase = destinosDestacados.flatMap((destino, indice) => {
-    const aerolineaIda    = aerolineas[indice % aerolineas.length].codigo;
-    const aerolineaVuelta = aerolineas[(indice + 3) % aerolineas.length].codigo;
+const rutasDesdeMIA = destinosDestacados
+    .filter(d => d.iata !== 'MIA')
+    .map((destino, indice) => {
+        const aerolineaIda    = aerolineas[indice % aerolineas.length].codigo;
+        const aerolineaVuelta = aerolineas[(indice + 3) % aerolineas.length].codigo;
+        return [
+            crearRutaBase('MIA', destino.iata, {
+                aerolinea: aerolineaIda,
+                numeroBase: `${aerolineaIda}${String(300 + indice).padStart(3, '0')}`,
+                duracionMinutos: destino.duracionMinutos,
+                escalas: destino.escalas,
+                precioBase: destino.precioBase,
+                equipaje: destino.equipaje,
+                horarios: destino.horarios
+            }),
+            crearRutaBase(destino.iata, 'MIA', {
+                aerolinea: aerolineaVuelta,
+                numeroBase: `${aerolineaVuelta}${String(600 + indice).padStart(3, '0')}`,
+                duracionMinutos: Math.max(90, Math.round(destino.duracionMinutos * 0.96)),
+                escalas: destino.escalas,
+                precioBase: Math.round(destino.precioBase * 0.92),
+                equipaje: destino.equipaje,
+                horarios: destino.horarios.map(hora => sumarMinutosAHora(hora, 45))
+            })
+        ];
+    });
 
-    return [
-        crearRutaBase('MIA', destino.iata, {
-            aerolinea: aerolineaIda,
-            numeroBase: `${aerolineaIda}${String(300 + indice).padStart(3, '0')}`,
-            duracionMinutos: destino.duracionMinutos,
-            escalas: destino.escalas,
-            precioBase: destino.precioBase,
-            equipaje: destino.equipaje,
-            horarios: destino.horarios
-        }),
-        crearRutaBase(destino.iata, 'MIA', {
-            aerolinea: aerolineaVuelta,
-            numeroBase: `${aerolineaVuelta}${String(600 + indice).padStart(3, '0')}`,
-            duracionMinutos: Math.max(90, Math.round(destino.duracionMinutos * 0.96)),
-            escalas: destino.escalas,
-            precioBase: Math.round(destino.precioBase * 0.92),
-            equipaje: destino.equipaje,
-            horarios: destino.horarios.map(hora => sumarMinutosAHora(hora, 45))
-        })
-    ];
-});
+const rutasDesdeSCL = destinosDestacados
+    .filter(d => d.iata !== 'SCL')
+    .map((destino, indice) => {
+        const aerolineaIda    = aerolineas[(indice + 2) % aerolineas.length].codigo;
+        const aerolineaVuelta = aerolineas[(indice + 5) % aerolineas.length].codigo;
+        const duracionSCL = Math.round(destino.duracionMinutos * 1.1);
+        const precioSCL   = Math.round(destino.precioBase * 0.95);
+        return [
+            crearRutaBase('SCL', destino.iata, {
+                aerolinea: aerolineaIda,
+                numeroBase: `${aerolineaIda}${String(800 + indice).padStart(3, '0')}`,
+                duracionMinutos: duracionSCL,
+                escalas: destino.escalas,
+                precioBase: precioSCL,
+                equipaje: destino.equipaje,
+                horarios: destino.horarios
+            }),
+            crearRutaBase(destino.iata, 'SCL', {
+                aerolinea: aerolineaVuelta,
+                numeroBase: `${aerolineaVuelta}${String(900 + indice).padStart(3, '0')}`,
+                duracionMinutos: Math.max(90, Math.round(duracionSCL * 0.96)),
+                escalas: destino.escalas,
+                precioBase: Math.round(precioSCL * 0.92),
+                equipaje: destino.equipaje,
+                horarios: destino.horarios.map(hora => sumarMinutosAHora(hora, 30))
+            })
+        ];
+    });
 
+const rutasBase = [...rutasDesdeMIA, ...rutasDesdeSCL].flat();
 function calcularLlegada(horaSalida, duracionMinutos) {
     return sumarMinutosAHora(horaSalida, duracionMinutos);
 }

@@ -609,12 +609,19 @@ function mostrarPagina(vuelos, pagina) {
 function crearTarjetaVuelo(vuelo) {
     const tarjeta = document.createElement('div');
     tarjeta.className = 'flight-card fade-in';
-    
-    const precioTotal = calcularPrecioTotal(vuelo);
-    const escalasTexto = vuelo.escalas === 0 ? 'Directo' : `${vuelo.escalas} ${vuelo.escalas === 1 ? 'escala' : 'escalas'}`;
-    
-    const classEscalas = vuelo.escalas === 0 ? 'flight-scales direct' : 'flight-scales';
-    
+
+    const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
+    const pasajeros = parseInt(criterios.pasajeros) || 1;
+
+    const precioPersona = calcularPrecioTotal(vuelo);
+    const precioTotal   = precioPersona * pasajeros;
+    const escalasTexto  = vuelo.escalas === 0 ? 'Directo' : `${vuelo.escalas} ${vuelo.escalas === 1 ? 'escala' : 'escalas'}`;
+    const classEscalas  = vuelo.escalas === 0 ? 'flight-scales direct' : 'flight-scales';
+
+    const textoPasajeros = pasajeros > 1
+        ? `<div class="text-muted small mt-1">$${precioPersona} x ${pasajeros} personas</div>`
+        : `<div class="text-muted small mt-1">precio por persona</div>`;
+
     tarjeta.innerHTML = `
         <div class="flight-details">
             <div>
@@ -632,36 +639,38 @@ function crearTarjetaVuelo(vuelo) {
             <div>
                 <div class="text-muted small">Escalas</div>
                 <div class="${classEscalas}">
-                    <i class="fas fa-${vuelo.escalas === 0 ? 'straight' : 'exchange-alt'}"></i>
+                    <i class="fas fa-${vuelo.escalas === 0 ? 'check' : 'exchange-alt'}"></i>
                     ${escalasTexto}
                 </div>
             </div>
             <div class="flight-price">
-                <div class="price-label">desde</div>
+                <div class="price-label">total</div>
                 <div class="price">$${precioTotal}</div>
-                <button class="btn btn-primary btn-sm fw-bold" data-vuelo-id="${vuelo.id}">
+                ${textoPasajeros}
+                <button class="btn btn-primary btn-sm fw-bold mt-2" data-vuelo-id="${vuelo.id}">
                     Reservar
                 </button>
             </div>
         </div>
     `;
-    
-    // Event listener para botón reservar
+
     tarjeta.querySelector('button').addEventListener('click', function() {
         vueloSeleccionado = vuelo;
         mostrarModalReserva(vuelo);
     });
-    
+
     return tarjeta;
 }
-
 /**
  * Muestra modal de confirmación de vuelo
  * @param {object} vuelo - Objeto del vuelo
  */
 function mostrarModalReserva(vuelo) {
     const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
-    
+    const pasajeros = parseInt(criterios.pasajeros) || 1;
+    const precioPersona = calcularPrecioTotal(vuelo);
+    const precioTotal = precioPersona * pasajeros;
+
     const info = `
         <div class="mb-3">
             <p class="text-muted mb-1">Vuelo seleccionado</p>
@@ -689,41 +698,48 @@ function mostrarModalReserva(vuelo) {
         </div>
         <hr>
         <div class="alert alert-info">
-            <strong>Precio total: $${calcularPrecioTotal(vuelo)}</strong>
+            <div class="d-flex justify-content-between mb-1">
+                <span>Precio por persona:</span>
+                <strong>$${precioPersona}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+                <span>Pasajeros:</span>
+                <strong>${pasajeros}</strong>
+            </div>
+            <div class="d-flex justify-content-between border-top pt-2 mt-1">
+                <span class="fw-bold">Total:</span>
+                <strong>$${precioTotal}</strong>
+            </div>
             <p class="text-muted small mb-0 mt-2">Incluye: Tarifa + Impuestos + Equipaje</p>
         </div>
     `;
-    
+
     document.getElementById('vueloSeleccionadoInfo').innerHTML = info;
-    
+
     const modal = new bootstrap.Modal(document.getElementById('reservaModal'));
     modal.show();
-    
-    // Event listener para confirmar
+
     document.getElementById('confirmarVuelo').onclick = function() {
         modal.hide();
         sessionStorage.setItem('vueloSeleccionado', JSON.stringify(vuelo));
         window.location.href = 'reserva.html';
     };
 }
-
-/**
- * Inicializa filtros en página de resultados
- */
 function inicializarFiltros() {
     const priceRange = document.getElementById('priceRange');
     const priceMin = document.getElementById('priceMin');
     const priceMax = document.getElementById('priceMax');
     const clearFilters = document.getElementById('clearFilters');
     const sortSelect = document.getElementById('sortSelect');
-    
-    // Event listener para rango de precio
+
+    const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
+    const pasajeros = parseInt(criterios.pasajeros) || 1;
+
     priceRange.addEventListener('input', function() {
         priceMax.textContent = '$' + this.value;
         aplicarFiltros();
     });
-    
-    // Event listeners para checkboxes
+
     document.querySelectorAll('.escalasFilter, .horarioFilter').forEach(checkbox => {
         checkbox.addEventListener('change', aplicarFiltros);
     });
@@ -735,55 +751,51 @@ function inicializarFiltros() {
     if (sortSelect) {
         sortSelect.addEventListener('change', aplicarFiltros);
     }
-    
-    // Botón limpiar filtros
+
     clearFilters.addEventListener('click', function() {
-        priceRange.value = 1000;
-        priceMax.textContent = '$1000';
-        document.querySelectorAll('.escalasFilter, .horarioFilter').forEach(checkbox => {
-            checkbox.checked = true;
-        });
-        document.querySelectorAll('.airlineFilter').forEach(checkbox => {
-            checkbox.checked = true;
-        });
-        if (sortSelect) {
-            sortSelect.value = 'precioAsc';
-        }
+        const precioMaximo = Math.max(...vuelosActuales.map(v => calcularPrecioTotal(v))) * pasajeros;
+        priceRange.value = precioMaximo;
+        priceRange.max = precioMaximo;
+        priceMax.textContent = '$' + precioMaximo;
+        document.querySelectorAll('.escalasFilter, .horarioFilter').forEach(cb => cb.checked = true);
+        document.querySelectorAll('.airlineFilter').forEach(cb => cb.checked = true);
+        if (sortSelect) sortSelect.value = 'precioAsc';
         aplicarFiltros();
     });
-    
-    // Establece rango máximo de precio
-    const precioMaximo = Math.max(...vuelosActuales.map(v => calcularPrecioTotal(v)));
+
+    // Máximo considera pasajeros
+    const precioMaximo = Math.max(...vuelosActuales.map(v => calcularPrecioTotal(v))) * pasajeros;
     priceRange.max = precioMaximo;
+    priceRange.value = precioMaximo;
     priceMax.textContent = '$' + precioMaximo;
 }
 
-/**
- * Aplica filtros a los vuelos
- */
 function aplicarFiltros() {
-    const precioMaximo = parseInt(document.getElementById('priceRange').value);
-    
+    const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
+    const pasajeros = parseInt(criterios.pasajeros) || 1;
+    const precioMaximoTotal = parseInt(document.getElementById('priceRange').value);
+
     const escalasSeleccionadas = [];
-    document.querySelectorAll('.escalasFilter:checked').forEach(checkbox => {
-        escalasSeleccionadas.push(parseInt(checkbox.value));
+    document.querySelectorAll('.escalasFilter:checked').forEach(cb => {
+        escalasSeleccionadas.push(parseInt(cb.value));
     });
-    
+
     const horariosSeleccionados = [];
-    document.querySelectorAll('.horarioFilter:checked').forEach(checkbox => {
-        horariosSeleccionados.push(checkbox.value);
+    document.querySelectorAll('.horarioFilter:checked').forEach(cb => {
+        horariosSeleccionados.push(cb.value);
     });
 
     const aerolineasSeleccionadas = obtenerAerolineasSeleccionadas();
-    const ordenSeleccionado = document.getElementById('sortSelect') ? document.getElementById('sortSelect').value : 'precioAsc';
-    
+    const ordenSeleccionado = document.getElementById('sortSelect')?.value || 'precioAsc';
+
+    // Filtra por precio por persona (divide el máximo entre pasajeros)
     const filtros = {
-        precioMaximo,
+        precioMaximo: Math.ceil(precioMaximoTotal / pasajeros),
         escalas: escalasSeleccionadas,
         horarios: horariosSeleccionados,
         aerolineas: aerolineasSeleccionadas
     };
-    
+
     const vuelosFiltrados = filtrarVuelos(vuelosActuales, filtros);
     const vuelosOrdenados = ordenarVuelosAvanzado(vuelosFiltrados, ordenSeleccionado);
     mostrarVuelos(vuelosOrdenados);

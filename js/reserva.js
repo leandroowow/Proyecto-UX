@@ -185,26 +185,39 @@ function cargarVueloSeleccionado(vuelo) {
     // Actualiza detalles de precios
     actualizarDetallesPrecios(vuelo);
 }
-
-/**
- * Actualiza los detalles de precios
- * @param {object} vuelo - Objeto del vuelo
- */
 function actualizarDetallesPrecios(vuelo) {
+    const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
+    const pasajeros = parseInt(criterios.pasajeros) || 1;
+
     const precioBase = vuelo.precioBase;
-    const impuestos = vuelo.impuestos;
-    const equipaje = vuelo.equipaje;
-    const total = calcularPrecioTotal(vuelo);
-    
-    // Actualiza en la página de reserva
-    document.getElementById('precioBse').textContent = `$${precioBase}`;
-    document.getElementById('impuestos').textContent = `$${impuestos}`;
-    document.getElementById('equipaje').textContent = `$${equipaje}`;
+    const impuestos  = vuelo.impuestos;
+    const equipaje   = vuelo.equipaje;
+    const totalPersona = precioBase + impuestos + equipaje;
+    const total = totalPersona * pasajeros;
+
+    document.getElementById('precioBse').textContent  = `$${precioBase}`;
+    document.getElementById('impuestos').textContent  = `$${impuestos}`;
+    document.getElementById('equipaje').textContent   = `$${equipaje}`;
     document.getElementById('totalPrice').textContent = `$${total}`;
-    
+
+    // Agrega fila de pasajeros si hay más de 1
+    const breakdown = document.querySelector('.price-breakdown');
+    const yaExiste = document.getElementById('filaPasajeros');
+    if (!yaExiste && pasajeros > 1) {
+        const fila = document.createElement('div');
+        fila.id = 'filaPasajeros';
+        fila.className = 'd-flex justify-content-between mb-2';
+        fila.innerHTML = `
+            <span>Pasajeros:</span>
+            <span class="fw-bold">${pasajeros} x $${totalPersona}</span>
+        `;
+        // Inserta antes del total
+        const filaTotal = breakdown.querySelector('.border-top');
+        breakdown.insertBefore(fila, filaTotal);
+    }
+
     reservaActual.total = total;
 }
-
 /**
  * Guarda los datos del pasajero en la reserva
  */
