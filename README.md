@@ -1,4 +1,4 @@
-# 🛫 ReservaVuelos - UX Flight Booking Experience
+# 🛫 ReservaVuelos - UX 
 
 ReservaVuelos es una plataforma moderna diseñada bajo principios de **Design Thinking** y **UX/UI**, con el objetivo de simplificar el proceso de reserva de vuelos y reducir la tasa de abandono mediante una interfaz intuitiva y transparente.
 
