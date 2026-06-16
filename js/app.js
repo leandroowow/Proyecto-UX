@@ -41,18 +41,24 @@ function crearBotonLimpiarCampo(wrapper, input) {
     button.className = 'clear-input-btn';
     button.setAttribute('aria-label', `Limpiar ${input.id || 'campo'}`);
     button.innerHTML = '<i class="fas fa-times"></i>';
-    button.style.display = input.value.trim() ? 'inline-flex' : 'none';
+    
+    const actualizarVisibilidad = () => {
+        button.style.display = input.value.trim() ? 'inline-flex' : 'none';
+    };
 
     button.addEventListener('click', function() {
         input.value = '';
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
+        actualizarVisibilidad();
         input.focus();
     });
 
-    input.addEventListener('input', function() {
-        button.style.display = this.value.trim() ? 'inline-flex' : 'none';
-    });
+    input.addEventListener('input', actualizarVisibilidad);
+    input.addEventListener('change', actualizarVisibilidad);
+    
+    // Verificación inicial para campos con valores predeterminados
+    actualizarVisibilidad();
 
     wrapper.appendChild(button);
 }
@@ -90,9 +96,6 @@ function intercambiarAeropuertos(origenInputId, origenCodeId, destinoInputId, de
 
     // Disparar eventos para que el sistema reconozca el cambio de texto
     // y no limpie los campos ocultos por error
-    origenInput.dispatchEvent(new Event('input', { bubbles: true }));
-    destinoInput.dispatchEvent(new Event('input', { bubbles: true }));
-
     origenInput.dispatchEvent(new Event('input', { bubbles: true }));
     destinoInput.dispatchEvent(new Event('input', { bubbles: true }));
 }
