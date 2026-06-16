@@ -154,16 +154,15 @@ function inicializarChatbot() {
 
     document.body.insertAdjacentHTML('beforeend', html);
 
-    document.getElementById('chatbot-toggle').addEventListener('click', () => {
-        const box = document.getElementById('chatbot-box');
-        const abierto = box.style.display !== 'none';
-        box.style.display = abierto ? 'none' : 'flex';
-        if (!abierto && document.getElementById('chatbot-messages').children.length === 0) {
-            agregarMensajeBot('👋 ¡Hola! Soy tu asistente de vuelos desde <strong>Santiago, Chile</strong>.<br>¿A dónde quieres viajar?');
-            chatEstado = chatEstados.ESPERANDO_DESTINO;
-        }
-    });
-
+document.getElementById('chatbot-toggle').addEventListener('click', () => {
+    const box = document.getElementById('chatbot-box');
+    const abierto = box.style.display !== 'none';
+    box.style.display = abierto ? 'none' : 'flex';
+    if (!abierto && document.getElementById('chatbot-messages').children.length === 0) {
+        agregarMensajeBot('👋 ¡Hola! Soy tu asistente de vuelos desde <strong>Santiago, Chile</strong>.<br>¿A dónde quieres viajar?');
+        chatEstado = chatEstados.ESPERANDO_DESTINO;
+    }
+});
     document.getElementById('chatbot-close').addEventListener('click', () => {
         document.getElementById('chatbot-box').style.display = 'none';
     });
