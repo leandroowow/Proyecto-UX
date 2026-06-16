@@ -1,47 +1,99 @@
 /**
  * ReservaVuelos - Datos y Lógica de Vuelos
- * Catálogo dinámico de aeropuertos, rutas y vuelos de demostración.
+ * Módulo que contiene los datos simulados y funciones de búsqueda
  */
 
 const aerolineas = [
     { codigo: 'LA', nombre: 'LATAM Airlines' },
     { codigo: 'SK', nombre: 'Sky Airline' },
     { codigo: 'JS', nombre: 'JetSmart' },
-    { codigo: 'AV', nombre: 'Avianca' },
-    { codigo: 'AM', nombre: 'Aeroméxico' },
+    { codigo: 'IB', nombre: 'Iberia' },
     { codigo: 'AA', nombre: 'American Airlines' },
     { codigo: 'AF', nombre: 'Air France' },
+    { codigo: 'AV', nombre: 'Avianca' },
+    { codigo: 'AM', nombre: 'Aeroméxico' },
     { codigo: 'UA', nombre: 'United Airlines' },
-    { codigo: 'IB', nombre: 'Iberia' },
     { codigo: 'AZ', nombre: 'ITA Airways' },
     { codigo: 'BA', nombre: 'British Airways' },
     { codigo: 'LH', nombre: 'Lufthansa' },
-    { codigo: 'QF', nombre: 'Qantas' },
-    { codigo: 'NH', nombre: 'ANA' }
+    { codigo: 'QF', nombre: 'Qantas' }
 ];
 
 const aeropuertos = [
-    { iata: 'MIA', ciudad: 'Miami', pais: 'Estados Unidos', aeropuerto: 'Miami International Airport', aliases: ['miami', 'miami international', 'florida', 'usa', 'estados unidos'] },
-    { iata: 'NYC', ciudad: 'Nueva York', pais: 'Estados Unidos', aeropuerto: 'New York City', aliases: ['new york', 'nueva york', 'ny', 'new york city'] },
-    { iata: 'SCL', ciudad: 'Santiago', pais: 'Chile', aeropuerto: 'Aeropuerto Internacional Arturo Merino Benítez', aliases: ['santiago', 'arturo merino benitez', 'santiago de chile', 'chile'] },
-    { iata: 'EZE', ciudad: 'Buenos Aires', pais: 'Argentina', aeropuerto: 'Aeropuerto Internacional Ministro Pistarini', aliases: ['buenos aires', 'ezeiza', 'ministro pistarini', 'argentina'] },
-    { iata: 'GRU', ciudad: 'São Paulo', pais: 'Brasil', aeropuerto: 'Aeropuerto Internacional de São Paulo-Guarulhos', aliases: ['sao paulo', 'sao', 'guarulhos', 'brasil'] },
-    { iata: 'LIM', ciudad: 'Lima', pais: 'Perú', aeropuerto: 'Aeropuerto Internacional Jorge Chávez', aliases: ['lima', 'jorge chavez', 'peru'] },
-    { iata: 'BOG', ciudad: 'Bogotá', pais: 'Colombia', aeropuerto: 'Aeropuerto Internacional El Dorado', aliases: ['bogota', 'el dorado', 'colombia'] },
-    { iata: 'MEX', ciudad: 'Ciudad de México', pais: 'México', aeropuerto: 'Aeropuerto Internacional Benito Juárez', aliases: ['ciudad de mexico', 'cdmx', 'benito juarez', 'mexico'] },
-    { iata: 'YYZ', ciudad: 'Toronto', pais: 'Canadá', aeropuerto: 'Toronto Pearson International Airport', aliases: ['toronto', 'pearson', 'canada'] },
-    { iata: 'MAD', ciudad: 'Madrid', pais: 'España', aeropuerto: 'Aeropuerto Adolfo Suárez Madrid-Barajas', aliases: ['madrid', 'barajas', 'espana'] },
-    { iata: 'CDG', ciudad: 'París', pais: 'Francia', aeropuerto: 'Aeropuerto Charles de Gaulle', aliases: ['paris', 'charles de gaulle', 'francia'] },
-    { iata: 'FCO', ciudad: 'Roma', pais: 'Italia', aeropuerto: 'Aeropuerto de Fiumicino', aliases: ['roma', 'fiumicino', 'italia'] },
-    { iata: 'LHR', ciudad: 'Londres', pais: 'Reino Unido', aeropuerto: 'Heathrow Airport', aliases: ['londres', 'heathrow', 'united kingdom', 'uk'] },
-    { iata: 'FRA', ciudad: 'Frankfurt', pais: 'Alemania', aeropuerto: 'Frankfurt Airport', aliases: ['frankfurt', 'alemania', 'germany'] },
-    { iata: 'SYD', ciudad: 'Sídney', pais: 'Australia', aeropuerto: 'Sydney Kingsford Smith Airport', aliases: ['sydney', 'sidney', 'australia'] },
-    { iata: 'HND', ciudad: 'Tokio', pais: 'Japón', aeropuerto: 'Tokyo Haneda Airport', aliases: ['tokio', 'tokyo', 'haneda', 'japon', 'japan'] },
-    { iata: 'CCS', ciudad: 'Caracas', pais: 'Venezuela', aeropuerto: 'Simón Bolívar', aliases: ['caracas', 'venezuela'] }
+    { iata: 'MIA', ciudad: 'Miami',          pais: 'Estados Unidos', aeropuerto: 'Miami International Airport',                    aliases: ['miami', 'miami international', 'florida', 'usa', 'estados unidos'] },
+    { iata: 'NYC', ciudad: 'Nueva York',      pais: 'Estados Unidos', aeropuerto: 'New York City',                                  aliases: ['new york', 'nueva york', 'ny', 'new york city'] },
+    { iata: 'SCL', ciudad: 'Santiago',        pais: 'Chile',          aeropuerto: 'Aeropuerto Internacional Arturo Merino Benítez', aliases: ['santiago', 'arturo merino benitez', 'santiago de chile', 'chile'] },
+    { iata: 'EZE', ciudad: 'Buenos Aires',    pais: 'Argentina',      aeropuerto: 'Aeropuerto Internacional Ministro Pistarini',    aliases: ['buenos aires', 'ezeiza', 'ministro pistarini', 'argentina'] },
+    { iata: 'GRU', ciudad: 'São Paulo',       pais: 'Brasil',         aeropuerto: 'Aeropuerto Internacional de São Paulo-Guarulhos',aliases: ['sao paulo', 'sao', 'guarulhos', 'brasil'] },
+    { iata: 'LIM', ciudad: 'Lima',            pais: 'Perú',           aeropuerto: 'Aeropuerto Internacional Jorge Chávez',          aliases: ['lima', 'jorge chavez', 'peru'] },
+    { iata: 'BOG', ciudad: 'Bogotá',          pais: 'Colombia',       aeropuerto: 'Aeropuerto Internacional El Dorado',             aliases: ['bogota', 'el dorado', 'colombia'] },
+    { iata: 'MEX', ciudad: 'Ciudad de México',pais: 'México',         aeropuerto: 'Aeropuerto Internacional Benito Juárez',         aliases: ['ciudad de mexico', 'cdmx', 'benito juarez', 'mexico'] },
+    { iata: 'YYZ', ciudad: 'Toronto',         pais: 'Canadá',         aeropuerto: 'Toronto Pearson International Airport',          aliases: ['toronto', 'pearson', 'canada'] },
+    { iata: 'MAD', ciudad: 'Madrid',          pais: 'España',         aeropuerto: 'Aeropuerto Adolfo Suárez Madrid-Barajas',        aliases: ['madrid', 'barajas', 'espana'] },
+    { iata: 'CUN', ciudad: 'Cancún',          pais: 'México',         aeropuerto: 'Aeropuerto Internacional de Cancún',             aliases: ['cancun', 'riviera maya', 'quintana roo', 'mexico'] },
+    { iata: 'CDG', ciudad: 'París',           pais: 'Francia',        aeropuerto: 'Aeropuerto Charles de Gaulle',                   aliases: ['paris', 'charles de gaulle', 'francia'] },
+    { iata: 'FCO', ciudad: 'Roma',            pais: 'Italia',         aeropuerto: 'Aeropuerto de Fiumicino',                        aliases: ['roma', 'fiumicino', 'italia'] },
+    { iata: 'LHR', ciudad: 'Londres',         pais: 'Reino Unido',    aeropuerto: 'Heathrow Airport',                               aliases: ['londres', 'heathrow', 'united kingdom', 'uk'] },
+    { iata: 'FRA', ciudad: 'Frankfurt',       pais: 'Alemania',       aeropuerto: 'Frankfurt Airport',                              aliases: ['frankfurt', 'alemania', 'germany'] },
+    { iata: 'GIG', ciudad: 'Río de Janeiro',  pais: 'Brasil',         aeropuerto: 'Aeropuerto Internacional Galeão',                aliases: ['rio de janeiro', 'rio', 'galeao', 'brasil'] },
+    { iata: 'SYD', ciudad: 'Sídney',          pais: 'Australia',      aeropuerto: 'Sydney Kingsford Smith Airport',                 aliases: ['sydney', 'sidney', 'australia'] },
+    { iata: 'HND', ciudad: 'Tokio',           pais: 'Japón',          aeropuerto: 'Tokyo Haneda Airport',                           aliases: ['tokio', 'tokyo', 'haneda', 'japon', 'japan'] },
+    { iata: 'CCS', ciudad: 'Caracas',         pais: 'Venezuela',      aeropuerto: 'Simón Bolívar',                                  aliases: ['caracas', 'venezuela'] }
 ];
 
-const ciudades = Object.fromEntries(aeropuertos.map(aeropuerto => [aeropuerto.iata, `${aeropuerto.ciudad}, ${aeropuerto.pais}`]));
-const horariosBase = ['06:10', '12:45', '20:20'];
+const ciudades = Object.fromEntries(
+    aeropuertos.map(a => [a.iata, `${a.ciudad}, ${a.pais}`])
+);
+
+const clasesVuelo = {
+    economica: {
+        codigo: 'economica',
+        nombre: 'Económica',
+        incremento: 0,
+        equipaje: '1 maleta incluida',
+        beneficios: ['Precio base', 'Asiento estándar']
+    },
+    premiumEconomy: {
+        codigo: 'premiumEconomy',
+        nombre: 'Premium Economy',
+        incremento: 0.2,
+        equipaje: '2 maletas incluidas',
+        beneficios: ['+20% sobre el precio base', 'Mayor espacio para piernas']
+    },
+    business: {
+        codigo: 'business',
+        nombre: 'Ejecutiva / Business',
+        incremento: 0.5,
+        equipaje: '2 maletas incluidas',
+        beneficios: ['+50% sobre el precio base', 'Acceso a Sala VIP', 'Embarque prioritario']
+    },
+    primeraClase: {
+        codigo: 'primeraClase',
+        nombre: 'Primera Clase',
+        incremento: 1,
+        equipaje: '3 maletas incluidas',
+        beneficios: ['+100% sobre el precio base', 'Sala VIP', 'Embarque prioritario', 'Servicio premium']
+    }
+};
+
+function obtenerClaseVuelo(codigo = 'economica') {
+    return clasesVuelo[codigo] || clasesVuelo.economica;
+}
+
+function calcularPrecioClaseVuelo(precioBase, codigoClase = 'economica') {
+    const clase = obtenerClaseVuelo(codigoClase);
+    return Math.round(Number(precioBase || 0) * (1 + clase.incremento));
+}
+
+function obtenerBeneficiosClaseVuelo(codigoClase = 'economica') {
+    return obtenerClaseVuelo(codigoClase).beneficios.slice();
+}
+
+function formatearMoneda(valor) {
+    return `$${Number(valor || 0).toLocaleString('es-CL')}`;
+}
+
+// ─── Utilidades de fecha y hora ───────────────────────────────────────────────
 
 function obtenerFechaActualISO() {
     return new Date().toISOString().slice(0, 10);
@@ -53,12 +105,12 @@ function sumarDiasISO(fechaISO, dias) {
     return fecha.toISOString().slice(0, 10);
 }
 
-function normalizarTexto(valor) {
-    return String(valor || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .trim();
+function sumarMinutosAHora(hora, minutosExtra) {
+    const [horas, minutos] = hora.split(':').map(Number);
+    const totalMinutos = horas * 60 + minutos + minutosExtra;
+    const horasNorm = Math.floor((totalMinutos % 1440) / 60);
+    const minutosNorm = totalMinutos % 60;
+    return `${String(horasNorm).padStart(2, '0')}:${String(minutosNorm).padStart(2, '0')}`;
 }
 
 function formatearDuracion(minutosTotales) {
@@ -67,37 +119,47 @@ function formatearDuracion(minutosTotales) {
     return `${horas}h ${minutos}m`;
 }
 
-function sumarMinutosAHora(hora, minutosExtra) {
-    const [horas, minutos] = hora.split(':').map(Number);
-    const totalMinutos = horas * 60 + minutos + minutosExtra;
-    const horasNormalizadas = Math.floor((totalMinutos % 1440) / 60);
-    const minutosNormalizados = totalMinutos % 60;
-    return `${String(horasNormalizadas).padStart(2, '0')}:${String(minutosNormalizados).padStart(2, '0')}`;
+function formatearFecha(fechaISO) {
+    if (!fechaISO) return '';
+    const fecha = new Date(`${fechaISO}T12:00:00`);
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+}
+
+
+function calcularDias(fecha1, fecha2) {
+    const d1 = new Date(`${fecha1}T12:00:00`);
+    const d2 = new Date(`${fecha2}T12:00:00`);
+    return Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+}
+
+// ─── Utilidades de aeropuertos ────────────────────────────────────────────────
+
+function normalizarTexto(valor) {
+    return String(valor || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
 }
 
 function obtenerAeropuertoPorIata(iata) {
-    if (!iata) {
-        return null;
-    }
-
-    return aeropuertos.find(aeropuerto => aeropuerto.iata === String(iata).trim().toUpperCase()) || null;
+    if (!iata) return null;
+    return aeropuertos.find(a => a.iata === String(iata).trim().toUpperCase()) || null;
 }
 
 function formatearAeropuerto(aeropuertoOIata) {
-    const aeropuerto = typeof aeropuertoOIata === 'string' ? obtenerAeropuertoPorIata(aeropuertoOIata) : aeropuertoOIata;
-
-    if (!aeropuerto) {
-        return String(aeropuertoOIata || '').trim();
-    }
-
+    const aeropuerto = typeof aeropuertoOIata === 'string'
+        ? obtenerAeropuertoPorIata(aeropuertoOIata)
+        : aeropuertoOIata;
+    if (!aeropuerto) return String(aeropuertoOIata || '').trim();
     return `${aeropuerto.ciudad}, ${aeropuerto.pais} (${aeropuerto.iata})`;
 }
 
 function obtenerDescripcionAeropuerto(aeropuerto) {
-    if (!aeropuerto) {
-        return '';
-    }
-
+    if (!aeropuerto) return '';
     return `${aeropuerto.ciudad}, ${aeropuerto.pais} (${aeropuerto.iata}) - ${aeropuerto.aeropuerto}`;
 }
 
@@ -108,52 +170,63 @@ function obtenerNombreCiudad(codigo) {
 
 function buscarAeropuertos(consulta) {
     const texto = normalizarTexto(consulta);
-
-    if (!texto) {
-        return aeropuertos.slice(0, 8);
-    }
+    if (!texto) return aeropuertos.slice(0, 8);
 
     return aeropuertos
         .map(aeropuerto => {
-            const campos = [aeropuerto.iata, aeropuerto.ciudad, aeropuerto.pais, aeropuerto.aeropuerto, ...(aeropuerto.aliases || [])].map(normalizarTexto);
-            let puntaje = 0;
+            const campos = [
+                aeropuerto.iata, aeropuerto.ciudad, aeropuerto.pais,
+                aeropuerto.aeropuerto, ...(aeropuerto.aliases || [])
+            ].map(normalizarTexto);
 
+            let puntaje = 0;
             if (aeropuerto.iata.toLowerCase() === texto) puntaje += 100;
             if (normalizarTexto(aeropuerto.ciudad) === texto) puntaje += 95;
             if (normalizarTexto(aeropuerto.aeropuerto) === texto) puntaje += 90;
-            if (campos.some(campo => campo.startsWith(texto))) puntaje += 70;
-            if (campos.some(campo => campo.includes(texto))) puntaje += 40;
+            if (campos.some(c => c.startsWith(texto))) puntaje += 70;
+            if (campos.some(c => c.includes(texto))) puntaje += 40;
 
             return { aeropuerto, puntaje };
         })
-        .filter(resultado => resultado.puntaje > 0)
+        .filter(r => r.puntaje > 0)
         .sort((a, b) => b.puntaje - a.puntaje || a.aeropuerto.ciudad.localeCompare(b.aeropuerto.ciudad))
         .slice(0, 8)
-        .map(resultado => resultado.aeropuerto);
+        .map(r => r.aeropuerto);
 }
 
 function resolverAeropuertoEntrada(entrada) {
+    if (!entrada) return null;
+
+    // Intento 0: Detectar formato "Ciudad, País (IATA)" para mayor estabilidad
+    const match = String(entrada).match(/\(([A-Z]{3})\)\s*$/i);
+    if (match) {
+        const aero = obtenerAeropuertoPorIata(match[1]);
+        if (aero) return aero;
+    }
+
     const texto = normalizarTexto(entrada);
 
-    if (!texto) {
-        return null;
-    }
-
-    const coincidenciaCodigo = obtenerAeropuertoPorIata(texto);
-    if (coincidenciaCodigo) {
-        return coincidenciaCodigo;
-    }
+    const porIata = obtenerAeropuertoPorIata(texto);
+    if (porIata) return porIata;
 
     const coincidencias = buscarAeropuertos(texto);
-    if (coincidencias.length > 0) {
-        return coincidencias[0];
-    }
+    if (coincidencias.length > 0) return coincidencias[0];
 
-    return aeropuertos.find(aeropuerto => {
-        const campos = [aeropuerto.ciudad, aeropuerto.pais, aeropuerto.aeropuerto, ...(aeropuerto.aliases || [])];
-        return campos.some(campo => normalizarTexto(campo) === texto);
+    return aeropuertos.find(a => {
+        const campos = [a.ciudad, a.pais, a.aeropuerto, ...(a.aliases || [])];
+        return campos.some(c => normalizarTexto(c) === texto);
     }) || null;
 }
+
+function obtenerCiudadesDisponibles() {
+    return aeropuertos.map(a => obtenerDescripcionAeropuerto(a));
+}
+
+function validarCiudad(valor) {
+    return Boolean(resolverAeropuertoEntrada(valor));
+}
+
+// ─── Rutas y vuelos ───────────────────────────────────────────────────────────
 
 function crearRutaBase(origen, destino, config) {
     return {
@@ -170,43 +243,84 @@ function crearRutaBase(origen, destino, config) {
     };
 }
 
-const rutasBase = [
-    crearRutaBase('MIA', 'SCL', { aerolinea: 'LA', numeroBase: '701', duracionMinutos: 505, escalas: 0, precioBase: 760, equipaje: 35, horarios: ['06:10', '12:45', '20:20'] }),
-    crearRutaBase('MIA', 'EZE', { aerolinea: 'SK', numeroBase: '702', duracionMinutos: 530, escalas: 0, precioBase: 790, equipaje: 35, horarios: ['07:20', '13:50', '21:10'] }),
-    crearRutaBase('MIA', 'GRU', { aerolinea: 'JS', numeroBase: '310', duracionMinutos: 485, escalas: 1, precioBase: 740, equipaje: 30, horarios: ['06:45', '12:30', '19:40'] }),
-    crearRutaBase('MIA', 'LIM', { aerolinea: 'AF', numeroBase: '420', duracionMinutos: 360, escalas: 0, precioBase: 620, equipaje: 28, horarios: ['05:55', '12:40', '18:30'] }),
-    crearRutaBase('MIA', 'BOG', { aerolinea: 'LA', numeroBase: '505', duracionMinutos: 255, escalas: 0, precioBase: 450, equipaje: 30, horarios: ['06:30', '10:20', '17:55'] }),
-    crearRutaBase('MIA', 'MEX', { aerolinea: 'AA', numeroBase: '202', duracionMinutos: 235, escalas: 0, precioBase: 390, equipaje: 25, horarios: ['08:15', '13:45', '22:05'] }),
-    crearRutaBase('MIA', 'YYZ', { aerolinea: 'AF', numeroBase: '155', duracionMinutos: 205, escalas: 0, precioBase: 420, equipaje: 22, horarios: ['07:00', '15:25', '21:50'] }),
-    crearRutaBase('MIA', 'MAD', { aerolinea: 'IB', numeroBase: '506', duracionMinutos: 515, escalas: 0, precioBase: 820, equipaje: 35, horarios: ['09:30', '16:15', '23:10'] }),
-    crearRutaBase('MIA', 'CDG', { aerolinea: 'AF', numeroBase: '203', duracionMinutos: 555, escalas: 1, precioBase: 860, equipaje: 35, horarios: ['08:05', '14:55', '22:30'] }),
-    crearRutaBase('MIA', 'FCO', { aerolinea: 'IB', numeroBase: '401', duracionMinutos: 590, escalas: 1, precioBase: 880, equipaje: 35, horarios: ['07:40', '13:30', '21:00'] }),
-    crearRutaBase('MIA', 'LHR', { aerolinea: 'AA', numeroBase: '507', duracionMinutos: 535, escalas: 0, precioBase: 840, equipaje: 35, horarios: ['09:15', '15:50', '22:40'] }),
-    crearRutaBase('MIA', 'FRA', { aerolinea: 'DH', numeroBase: '321', duracionMinutos: 540, escalas: 1, precioBase: 830, equipaje: 35, horarios: ['06:50', '12:25', '20:35'] }),
-    crearRutaBase('MIA', 'SYD', { aerolinea: 'VB', numeroBase: '902', duracionMinutos: 1100, escalas: 2, precioBase: 1490, equipaje: 45, horarios: ['07:15', '12:55', '19:40'] }),
-    crearRutaBase('MIA', 'HND', { aerolinea: 'AV', numeroBase: '801', duracionMinutos: 1000, escalas: 1, precioBase: 1380, equipaje: 45, horarios: ['08:25', '14:10', '22:00'] }),
-    crearRutaBase('MIA', 'CCS', { aerolinea: 'IB', numeroBase: '612', duracionMinutos: 210, escalas: 0, precioBase: 360, equipaje: 22, horarios: ['06:20', '12:15', '18:50'] })
+const destinosDestacados = [
+    { iata: 'EZE', duracionMinutos: 560,  precioBase: 650,  escalas: 0, equipaje: 30, horarios: ['07:20', '13:10', '20:25'] },
+    { iata: 'GRU', duracionMinutos: 510,  precioBase: 620,  escalas: 1, equipaje: 28, horarios: ['06:45', '14:00', '21:10'] },
+    { iata: 'LIM', duracionMinutos: 375,  precioBase: 540,  escalas: 0, equipaje: 25, horarios: ['05:55', '12:40', '18:30'] },
+    { iata: 'BOG', duracionMinutos: 255,  precioBase: 420,  escalas: 0, equipaje: 25, horarios: ['06:30', '10:20', '17:55'] },
+    { iata: 'MEX', duracionMinutos: 185,  precioBase: 390,  escalas: 0, equipaje: 23, horarios: ['08:15', '13:45', '22:05'] },
+    { iata: 'YYZ', duracionMinutos: 210,  precioBase: 430,  escalas: 0, equipaje: 24, horarios: ['07:00', '15:25', '21:50'] },
+    { iata: 'MAD', duracionMinutos: 515,  precioBase: 760,  escalas: 0, equipaje: 30, horarios: ['09:30', '16:15', '23:10'] },
+    { iata: 'CUN', duracionMinutos: 470,  precioBase: 880,  escalas: 1, equipaje: 32, horarios: ['08:50', '15:05', '22:20'] },
+    { iata: 'CDG', duracionMinutos: 575,  precioBase: 820,  escalas: 0, equipaje: 32, horarios: ['08:05', '14:55', '22:30'] },
+    { iata: 'FCO', duracionMinutos: 590,  precioBase: 800,  escalas: 0, equipaje: 31, horarios: ['07:40', '13:30', '21:00'] },
+    { iata: 'LHR', duracionMinutos: 580,  precioBase: 830,  escalas: 0, equipaje: 32, horarios: ['09:15', '15:50', '22:40'] },
+    { iata: 'FRA', duracionMinutos: 560,  precioBase: 810,  escalas: 0, equipaje: 32, horarios: ['06:50', '12:25', '20:35'] },
+    { iata: 'GIG', duracionMinutos: 315,  precioBase: 560,  escalas: 0, equipaje: 24, horarios: ['07:25', '13:45', '19:20'] },
+    { iata: 'SYD', duracionMinutos: 1035, precioBase: 1450, escalas: 1, equipaje: 35, horarios: ['07:15', '12:55', '19:40'] },
+    { iata: 'HND', duracionMinutos: 870,  precioBase: 1320, escalas: 1, equipaje: 34, horarios: ['08:25', '14:10', '22:00'] },
+    { iata: 'CCS', duracionMinutos: 210,  precioBase: 360,  escalas: 0, equipaje: 22, horarios: ['06:20', '12:15', '18:50'] },
+    { iata: 'MIA', duracionMinutos: 615,  precioBase: 690,  escalas: 0, equipaje: 32, horarios: ['06:10', '11:35', '19:45'] },
+    { iata: 'NYC', duracionMinutos: 720,  precioBase: 750,  escalas: 1, equipaje: 30, horarios: ['07:30', '14:20', '21:00'] },
 ];
 
-function obtenerRutasActivas() {
-    return rutasBase.flatMap(ruta => {
-        const regreso = {
-            origen: ruta.destino,
-            destino: ruta.origen,
-            aerolinea: ruta.aerolinea,
-            numeroBase: String(Number(ruta.numeroBase) + 300),
-            duracionMinutos: ruta.duracionMinutos,
-            escalas: ruta.escalas,
-            precioBase: Math.round(ruta.precioBase * 0.96),
-            impuestos: Math.round(ruta.precioBase * 0.12 * 0.96),
-            equipaje: ruta.equipaje,
-            horarios: ruta.horarios.map(hora => sumarMinutosAHora(hora, 45))
-        };
-
-        return [ruta, regreso];
+const rutasDesdeMIA = destinosDestacados
+    .filter(d => d.iata !== 'MIA')
+    .map((destino, indice) => {
+        const aerolineaIda    = aerolineas[indice % aerolineas.length].codigo;
+        const aerolineaVuelta = aerolineas[(indice + 3) % aerolineas.length].codigo;
+        return [
+            crearRutaBase('MIA', destino.iata, {
+                aerolinea: aerolineaIda,
+                numeroBase: `${aerolineaIda}${String(300 + indice).padStart(3, '0')}`,
+                duracionMinutos: destino.duracionMinutos,
+                escalas: destino.escalas,
+                precioBase: destino.precioBase,
+                equipaje: destino.equipaje,
+                horarios: destino.horarios
+            }),
+            crearRutaBase(destino.iata, 'MIA', {
+                aerolinea: aerolineaVuelta,
+                numeroBase: `${aerolineaVuelta}${String(600 + indice).padStart(3, '0')}`,
+                duracionMinutos: Math.max(90, Math.round(destino.duracionMinutos * 0.96)),
+                escalas: destino.escalas,
+                precioBase: Math.round(destino.precioBase * 0.92),
+                equipaje: destino.equipaje,
+                horarios: destino.horarios.map(hora => sumarMinutosAHora(hora, 45))
+            })
+        ];
     });
-}
 
+const rutasDesdeSCL = destinosDestacados
+    .filter(d => d.iata !== 'SCL')
+    .map((destino, indice) => {
+        const aerolineaIda    = aerolineas[(indice + 2) % aerolineas.length].codigo;
+        const aerolineaVuelta = aerolineas[(indice + 5) % aerolineas.length].codigo;
+        const duracionSCL = Math.round(destino.duracionMinutos * 1.1);
+        const precioSCL   = Math.round(destino.precioBase * 0.95);
+        return [
+            crearRutaBase('SCL', destino.iata, {
+                aerolinea: aerolineaIda,
+                numeroBase: `${aerolineaIda}${String(800 + indice).padStart(3, '0')}`,
+                duracionMinutos: duracionSCL,
+                escalas: destino.escalas,
+                precioBase: precioSCL,
+                equipaje: destino.equipaje,
+                horarios: destino.horarios
+            }),
+            crearRutaBase(destino.iata, 'SCL', {
+                aerolinea: aerolineaVuelta,
+                numeroBase: `${aerolineaVuelta}${String(900 + indice).padStart(3, '0')}`,
+                duracionMinutos: Math.max(90, Math.round(duracionSCL * 0.96)),
+                escalas: destino.escalas,
+                precioBase: Math.round(precioSCL * 0.92),
+                equipaje: destino.equipaje,
+                horarios: destino.horarios.map(hora => sumarMinutosAHora(hora, 30))
+            })
+        ];
+    });
+
+const rutasBase = [...rutasDesdeMIA, ...rutasDesdeSCL].flat();
 function calcularLlegada(horaSalida, duracionMinutos) {
     return sumarMinutosAHora(horaSalida, duracionMinutos);
 }
@@ -217,9 +331,9 @@ function generarVuelosParaRuta(ruta, fechaISO) {
         const precioBase = ruta.precioBase + ajustePrecio;
 
         return {
-            id: Number(`${fechaISO.replace(/-/g, '')}${ruta.numeroBase}${indiceHorario}`),
+            id: Number(`${fechaISO.replace(/-/g, '')}${ruta.numeroBase.replace(/\D/g, '')}${indiceHorario}`),
             aerolinea: ruta.aerolinea,
-            numero: `${ruta.aerolinea}-${ruta.numeroBase}-${String(indiceHorario + 1).padStart(2, '0')}`,
+            numero: `${ruta.aerolinea}-${ruta.numeroBase}`,
             salida: horaSalida,
             llegada: calcularLlegada(horaSalida, ruta.duracionMinutos),
             duracion: formatearDuracion(ruta.duracionMinutos),
@@ -236,12 +350,20 @@ function generarVuelosParaRuta(ruta, fechaISO) {
 }
 
 function generarInventarioInicial() {
-    const hoy = obtenerFechaActualISO();
+    const hoy    = obtenerFechaActualISO();
     const manana = sumarDiasISO(hoy, 1);
-    return [hoy, manana].flatMap(fechaISO => rutasBase.flatMap(ruta => generarVuelosParaRuta(ruta, fechaISO)));
+    return [hoy, manana].flatMap(fechaISO =>
+        rutasBase.flatMap(ruta => generarVuelosParaRuta(ruta, fechaISO))
+    );
 }
 
 const vuelosData = generarInventarioInicial();
+
+function obtenerRutasActivas() {
+    return rutasBase;
+}
+
+// ─── Utilidades de vuelos ─────────────────────────────────────────────────────
 
 function obtenerNombreAerolinea(codigo) {
     const aerolinea = aerolineas.find(a => a.codigo === codigo);
@@ -266,19 +388,18 @@ function filtrarVuelos(vuelos, filtros) {
         if (!filtros.escalas.includes(vuelo.escalas)) return false;
         const parteDia = obtenerParteDia(vuelo.salida);
         if (!filtros.horarios.includes(parteDia)) return false;
-        const aerolineaValida = !filtros.aerolineas || filtros.aerolineas.length === 0 || filtros.aerolineas.includes(vuelo.aerolinea);
-        return precioTotal <= filtros.precioMaximo && filtros.escalas.includes(vuelo.escalas) && filtros.horarios.includes(parteDia) && aerolineaValida;
+        const aerolineaValida = !filtros.aerolineas || filtros.aerolineas.length === 0 ||
+            filtros.aerolineas.includes(vuelo.aerolinea);
+        return aerolineaValida;
     });
 }
 
 function buscarVuelos(criterios) {
-    const origen = resolverAeropuertoEntrada(criterios.origen);
+    const origen  = resolverAeropuertoEntrada(criterios.origen);
     const destino = resolverAeropuertoEntrada(criterios.destino);
-    const fecha = criterios.fecha || obtenerFechaActualISO();
+    const fecha   = criterios.fecha || obtenerFechaActualISO();
 
-    if (!origen || !destino) {
-        return [];
-    }
+    if (!origen || !destino) return [];
 
     return obtenerRutasActivas()
         .filter(ruta => ruta.origen === origen.iata && ruta.destino === destino.iata)
@@ -292,7 +413,9 @@ function ordenarVuelos(vuelos, ordenar = 'precio') {
         case 'precio':
             return copia.sort((a, b) => calcularPrecioTotal(a) - calcularPrecioTotal(b));
         case 'duracion':
-            return copia.sort((a, b) => parseInt(a.duracion.split('h')[0], 10) - parseInt(b.duracion.split('h')[0], 10));
+            return copia.sort((a, b) =>
+                parseInt(a.duracion.split('h')[0], 10) - parseInt(b.duracion.split('h')[0], 10)
+            );
         case 'horario':
             return copia.sort((a, b) => {
                 const [hA, mA] = a.salida.split(':').map(Number);
@@ -302,14 +425,6 @@ function ordenarVuelos(vuelos, ordenar = 'precio') {
         default:
             return copia;
     }
-}
-
-function obtenerCiudadesDisponibles() {
-    return aeropuertos.map(aeropuerto => obtenerDescripcionAeropuerto(aeropuerto));
-}
-
-function validarCiudad(valor) {
-    return Boolean(resolverAeropuertoEntrada(valor));
 }
 
 function generarCodigoReserva() {
@@ -322,25 +437,5 @@ function generarCodigoReserva() {
 }
 
 function obtenerVueloPorId(id) {
-    return vuelosData.find(vuelo => vuelo.id === id);
-}
-
-function formatearFecha(fechaISO) {
-    if (!fechaISO) {
-        return '';
-    }
-
-    const fecha = new Date(`${fechaISO}T12:00:00`);
-    return new Intl.DateTimeFormat('es-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    }).format(fecha);
-}
-
-function calcularDias(fecha1, fecha2) {
-    const date1 = new Date(`${fecha1}T12:00:00`);
-    const date2 = new Date(`${fecha2}T12:00:00`);
-    return Math.ceil((date2 - date1) / (1000 * 60 * 60 * 24));
+    return vuelosData.find(v => v.id === id);
 }

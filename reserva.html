@@ -35,6 +35,11 @@
                     <div class="step-line"></div>
                     <div class="step">
                         <span class="step-number">3</span>
+                        <span class="step-label">Pago</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step">
+                        <span class="step-number">4</span>
                         <span class="step-label">Confirmar</span>
                     </div>
                 </div>
@@ -53,7 +58,7 @@
                             <i class="fas fa-user-circle"></i> Datos del Pasajero
                         </h3>
 
-                        <form id="reservaForm">
+                        <form id="reservaForm" class="needs-validation" novalidate>
                             <!-- Nombre Completo -->
                             <div class="mb-4 position-relative" data-clearable>
                                 <label for="nombre" class="form-label fw-bold">Nombre Completo *</label>
@@ -61,7 +66,9 @@
                                     type="text" 
                                     class="form-control form-control-lg" 
                                     id="nombre" 
-                                    placeholder="Ej: Juan Pérez García"
+                                    placeholder="Ej: manuel Pérez García"
+                                    autocomplete="name"
+                                    minlength="3"
                                     required
                                 >
                                 <small class="text-muted">Como aparece en tu pasaporte o cédula</small>
@@ -76,6 +83,7 @@
                                     class="form-control form-control-lg" 
                                     id="correo" 
                                     placeholder="tu@email.com"
+                                    autocomplete="email"
                                     required
                                 >
                                 <small class="text-muted">Recibirás la confirmación aquí</small>
@@ -90,10 +98,34 @@
                                     class="form-control form-control-lg" 
                                     id="telefono" 
                                     placeholder="+57 3XX XXXXXXX"
+                                    autocomplete="tel"
                                     required
                                 >
                                 <small class="text-muted">Incluye el código de país</small>
                                 <div class="invalid-feedback" id="telefonoError"></div>
+                            </div>
+
+                            <!-- Clase de vuelo -->
+                            <div class="mb-4">
+                                <label for="claseVuelo" class="form-label fw-bold">Clase de vuelo *</label>
+                                <select class="form-select form-select-lg" id="claseVuelo" required>
+                                    <option value="economica">Económica</option>
+                                    <option value="premiumEconomy">Premium Economy</option>
+                                    <option value="business">Ejecutiva / Business</option>
+                                    <option value="primeraClase">Primera Clase</option>
+                                </select>
+                                <small class="text-muted">La clase ajusta el precio, beneficios y equipaje incluido.</small>
+                            </div>
+
+                            <!-- Beneficios de la clase -->
+                            <div class="mb-4">
+                                <div class="class-benefits-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold mb-0">Beneficios de tu clase</h6>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle" id="claseNombreResumen">Económica</span>
+                                    </div>
+                                    <div id="beneficiosClase"></div>
+                                </div>
                             </div>
 
                             <!-- Aceptar términos -->
@@ -115,7 +147,7 @@
                                     <i class="fas fa-arrow-left"></i> Atrás
                                 </a>
                                 <button type="submit" class="btn btn-primary btn-lg flex-grow-1 fw-bold" id="continuarBtn">
-                                    <i class="fas fa-arrow-right"></i> Continuar
+                                    <i class="fas fa-arrow-right"></i> Continuar al pago
                                 </button>
                             </div>
                         </form>
@@ -137,30 +169,37 @@
                             <!-- Cargado por JS -->
                         </div>
 
-                        <!-- Price Breakdown -->
-                        <div class="price-breakdown mb-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Tarifa base:</span>
-                                <span id="precioBse" class="fw-bold">$0</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Impuestos:</span>
-                                <span id="impuestos" class="fw-bold">$0</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Equipaje (1):</span>
-                                <span id="equipaje" class="fw-bold">$0</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-3 pt-3 border-top border-2">
-                                <span class="fs-5 fw-bold">Total:</span>
-                                <span id="totalPrice" class="fs-5 fw-bold text-primary">$0</span>
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Resumen del precio</h6>
+                            <div class="price-breakdown mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tarifa base:</span>
+                                    <span id="precioBase" class="fw-bold">$0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Recargo por clase:</span>
+                                    <span id="recargoClase" class="fw-bold">$0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Impuestos:</span>
+                                    <span id="impuestos" class="fw-bold">$0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Equipaje permitido:</span>
+                                    <span id="equipaje" class="fw-bold">1 maleta incluida</span>
+                                </div>
+                                <div id="filaPasajeros"></div>
+                                <div class="d-flex justify-content-between mb-3 pt-3 border-top border-2">
+                                    <span class="fs-5 fw-bold">Total:</span>
+                                    <span id="totalPrice" class="fs-5 fw-bold text-primary">$0</span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Info Box -->
                         <div class="alert alert-info mb-0">
                             <i class="fas fa-info-circle"></i>
-                            <small class="ms-2">Todos los precios incluyen impuestos. No hay costos adicionales.</small>
+                            <small class="ms-2">El total se recalcula automáticamente según la clase de vuelo seleccionada.</small>
                         </div>
                     </div>
                 </div>

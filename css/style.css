@@ -270,6 +270,177 @@ small {
     box-shadow: var(--shadow-lg);
 }
 
+.packages-section {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(30, 58, 138, 0.08);
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.package-card {
+    background: #ffffff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.package-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 35px rgba(15, 23, 42, 0.14);
+}
+
+.package-image-wrap {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+}
+
+.package-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.package-card:hover .package-image {
+    transform: scale(1.05);
+}
+
+.package-image-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.38) 100%);
+}
+
+.package-badge {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    z-index: 2;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #0f172a;
+    font-size: 0.85rem;
+    font-weight: 700;
+    backdrop-filter: blur(12px);
+}
+
+.package-body {
+    padding: 1.5rem;
+}
+
+.package-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.package-features li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--secondary-color);
+}
+
+.package-features li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    color: var(--success-color);
+}
+
+.class-benefits-card {
+    padding: 1.25rem;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.06));
+    border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.benefits-list {
+    list-style: none;
+    padding-left: 0;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.benefits-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: #1e293b;
+}
+
+.payment-card,
+.payment-summary-card {
+    border-radius: 22px;
+}
+
+.payment-option {
+    display: block;
+    cursor: pointer;
+}
+
+.payment-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.payment-option-card {
+    min-height: 100%;
+    border: 2px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.payment-option:hover .payment-option-card,
+.payment-radio:focus-visible + .payment-option-card {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.payment-radio:checked + .payment-option-card {
+    border-color: var(--primary-color);
+    background: rgba(30, 58, 138, 0.05);
+}
+
+.payment-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(30, 58, 138, 0.08);
+    color: var(--primary-color);
+    font-size: 1.05rem;
+}
+
+.payment-benefits {
+    color: var(--secondary-color);
+}
+
 .info-icon {
     display: inline-block;
     animation: float 3s ease-in-out infinite;
@@ -770,5 +941,351 @@ footer {
     to {
         opacity: 1;
         transform: translateX(0);
+    }
+}
+/* ============================================
+   DARK MODE
+   ============================================ */
+body.dark-mode {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode .navbar {
+    background-color: #1e293b !important;
+    border-color: #334155;
+}
+
+body.dark-mode .navbar-brand {
+    color: #93c5fd !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .modal-content {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .modal-header {
+    background-color: #0f172a;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #64748b;
+}
+
+body.dark-mode .airport-suggestions {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .airport-suggestion:hover {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+body.dark-mode .airport-suggestion-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .flight-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .flight-card:hover {
+    border-color: var(--primary-light);
+}
+
+body.dark-mode .flight-scales {
+    background-color: #0f172a;
+}
+
+body.dark-mode .price-breakdown {
+    background-color: #0f172a;
+}
+
+body.dark-mode .info-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .package-card,
+body.dark-mode .payment-card,
+body.dark-mode .payment-summary-card,
+body.dark-mode .class-benefits-card {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode .package-features li,
+body.dark-mode .benefits-list li,
+body.dark-mode .payment-benefits {
+    color: #cbd5e1;
+}
+
+body.dark-mode .package-badge {
+    background: rgba(15, 23, 42, 0.9);
+    color: #e2e8f0;
+}
+
+body.dark-mode .payment-option-card {
+    background-color: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-mode .payment-radio:checked + .payment-option-card {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+body.dark-mode .info-section,
+body.dark-mode .search-section,
+body.dark-mode .reservas-section {
+    background-color: #0f172a !important;
+}
+
+body.dark-mode .table {
+    color: #e2e8f0;
+}
+
+body.dark-mode .table thead th {
+    color: #94a3b8;
+}
+
+body.dark-mode .alert-info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+}
+
+body.dark-mode .text-muted {
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .booking-code {
+    background-color: #0f172a;
+}
+
+body.dark-mode footer {
+    background-color: #020617 !important;
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+body.dark-mode .search-card {
+    background-color: #1e293b;
+}
+/* ============================================
+   CHATBOT
+   ============================================ */
+#chatbot-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+}
+
+#chatbot-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    border: none;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 12px rgba(30,58,138,0.4);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#chatbot-toggle:hover {
+    transform: scale(1.1);
+}
+
+#chatbot-box {
+    position: absolute;
+    bottom: 68px;
+    right: 0;
+    width: 320px;
+    height: 420px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+#chatbot-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+}
+
+#chatbot-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#chatbot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chatbot-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.chatbot-msg.bot {
+    background: var(--light-bg);
+    color: #1e293b;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.chatbot-msg.user {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+#chatbot-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+#chatbot-input {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    outline: none;
+}
+
+#chatbot-input:focus {
+    border-color: var(--primary-light);
+}
+
+#chatbot-send {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+body.dark-mode #chatbot-box {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+body.dark-mode .chatbot-msg.bot {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode #chatbot-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+body.dark-mode #chatbot-input-area {
+    border-color: #334155;
+}
+/* ============================================
+   FILTROS MÓVIL - OVERLAY
+   ============================================ */
+@media (max-width: 991px) {
+    #filtersSidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1050;
+        background: white;
+        padding: 16px;
+        transition: left 0.3s ease;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    }
+
+    #filtersSidebar.active {
+        left: 0;
+    }
+
+    #filtersSidebar .sticky-top {
+        position: relative !important;
+        top: auto !important;
+    }
+
+    #filtersSidebar .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Overlay oscuro detrás del panel */
+    #filtersOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1049;
+    }
+
+    #filtersOverlay.active {
+        display: block;
+    }
+
+    body.dark-mode #filtersSidebar {
+        background: #1e293b;
+    }
+
+    /* Oculta el col vacío en móvil */
+    .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
     }
 }
