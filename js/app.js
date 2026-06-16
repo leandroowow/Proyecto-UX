@@ -41,18 +41,24 @@ function crearBotonLimpiarCampo(wrapper, input) {
     button.className = 'clear-input-btn';
     button.setAttribute('aria-label', `Limpiar ${input.id || 'campo'}`);
     button.innerHTML = '<i class="fas fa-times"></i>';
-    button.style.display = input.value ? 'inline-flex' : 'none';
+    
+    const actualizarVisibilidad = () => {
+        button.style.display = input.value.trim() ? 'inline-flex' : 'none';
+    };
 
     button.addEventListener('click', function() {
         input.value = '';
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
+        actualizarVisibilidad();
         input.focus();
     });
 
-    input.addEventListener('input', function() {
-        button.style.display = this.value.trim() ? 'inline-flex' : 'none';
-    });
+    input.addEventListener('input', actualizarVisibilidad);
+    input.addEventListener('change', actualizarVisibilidad);
+    
+    // Verificación inicial para campos con valores predeterminados
+    actualizarVisibilidad();
 
     wrapper.appendChild(button);
 }
@@ -83,7 +89,13 @@ function intercambiarAeropuertos(origenInputId, origenCodeId, destinoInputId, de
     origenCodigo.value = destinoCodigo.value;
     destinoInput.value = origenValor;
     destinoCodigo.value = origenCodigoValor;
+    
+    // Sincronizar estados de selección para el autocompletado
+    origenInput.dataset.selectedIata = origenCodigo.value;
+    destinoInput.dataset.selectedIata = destinoCodigo.value;
 
+    // Disparar eventos para que el sistema reconozca el cambio de texto
+    // y no limpie los campos ocultos por error
     origenInput.dispatchEvent(new Event('input', { bubbles: true }));
     destinoInput.dispatchEvent(new Event('input', { bubbles: true }));
 }
@@ -197,6 +209,7 @@ function sincronizarCampoAeropuerto(inputId, codeId, aeropuerto) {
         hidden.value = aeropuerto.iata;
     }
     input.dataset.selectedIata = aeropuerto.iata;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function inicializarAutocompletadoAeropuertos() {
@@ -214,8 +227,11 @@ function inicializarAutocompletadoAeropuertos() {
             sugerencias.classList.remove('show');
         };
 
-        const renderizarSugerencias = () => {
-            const coincidencias = buscarAeropuertos(input.value);
+        const renderizarSugerencias = (forceAll = false) => {
+            // Si se fuerza (por clic) o si el valor actual es un aeropuerto ya seleccionado (contiene paréntesis),
+            // mostramos la lista completa para facilitar el cambio rápido.
+            const query = (forceAll || (input.value.includes('(') && input.dataset.selectedIata)) ? '' : input.value;
+            const coincidencias = buscarAeropuertos(query);
 
             if (!coincidencias.length) {
                 sugerencias.innerHTML = '<div class="airport-suggestion airport-suggestion-empty">No se encontraron coincidencias</div>';
@@ -243,6 +259,7 @@ function inicializarAutocompletadoAeropuertos() {
                 hidden.value = aeropuerto.iata;
             }
             input.dataset.selectedIata = aeropuerto.iata;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
             limpiarSugerencias();
         };
 
@@ -255,7 +272,7 @@ function inicializarAutocompletadoAeropuertos() {
         });
 
         input.addEventListener('focus', () => {
-            renderizarSugerencias();
+            renderizarSugerencias(true);
         });
 
         input.addEventListener('keydown', evento => {
@@ -281,6 +298,8 @@ function inicializarAutocompletadoAeropuertos() {
 }
 
 function validarYGuardarBusqueda({ origenInputId, origenCodeId, destinoInputId, destinoCodeId, fechaSalidaId, fechaRegresoId, pasajerosId }) {
+    const origenInput = document.getElementById(origenInputId);
+    const destinoInput = document.getElementById(destinoInputId);
     const origen = obtenerAeropuertoDesdeFormulario(origenInputId, origenCodeId);
     const destino = obtenerAeropuertoDesdeFormulario(destinoInputId, destinoCodeId);
     const fechaSalida = document.getElementById(fechaSalidaId)?.value || '';
@@ -288,18 +307,25 @@ function validarYGuardarBusqueda({ origenInputId, origenCodeId, destinoInputId, 
     const pasajeros = document.getElementById(pasajerosId)?.value || '1';
     const hoy = obtenerFechaActualISO();
 
-    if (!origen) {
-        alert('Selecciona un origen válido desde las sugerencias.');
+    if (!origenInput?.value.trim()) {
+        alert('Seleccione una ciudad de origen.');
         return false;
     }
-
+    if (!origen) {
+        alert('El origen ingresado no es válido. Seleccione una opción de la lista.');
+        return false;
+    }
+    if (!destinoInput?.value.trim()) {
+        alert('Seleccione una ciudad de destino.');
+        return false;
+    }
     if (!destino) {
-        alert('Selecciona un destino válido desde las sugerencias.');
+        alert('El destino ingresado no es válido. Seleccione una opción de la lista.');
         return false;
     }
 
     if (origen.iata === destino.iata) {
-        alert('El origen y el destino no pueden ser iguales.');
+        alert('El origen y destino no pueden ser iguales.');
         return false;
     }
 
@@ -310,6 +336,12 @@ function validarYGuardarBusqueda({ origenInputId, origenCodeId, destinoInputId, 
 
     if (fechaRegreso && fechaRegreso < fechaSalida) {
         alert('La fecha de regreso debe ser posterior a la salida.');
+        return false;
+    }
+
+    const numPasajeros = parseInt(pasajeros);
+    if (isNaN(numPasajeros) || numPasajeros < 1 || numPasajeros > 10) {
+        alert('Seleccione una cantidad de pasajeros válida (1-10).');
         return false;
     }
 
@@ -354,6 +386,8 @@ document.addEventListener('DOMContentLoaded', function() {
  * Inicializa la página de inicio
  */
 function inicializarHome() {
+    // Limpiar estados previos para garantizar estabilidad en nuevas búsquedas
+    sessionStorage.removeItem('vueloSeleccionado');
     inicializarBotonesLimpiezaRapida();
 
     const formBusqueda = document.getElementById('searchForm');
@@ -477,7 +511,17 @@ function inicializarResultados() {
     
     // Si no hay vuelos
     if (vuelosActuales.length === 0) {
-        document.getElementById('emptyState').style.display = 'block';
+        const emptyState = document.getElementById('emptyState');
+        if (emptyState) {
+            emptyState.style.display = 'block';
+            emptyState.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4 class="fw-bold">No se encontraron resultados para esta búsqueda</h4>
+                    <p class="text-muted">Prueba con otras fechas o destinos cercanos.</p>
+                </div>
+            `;
+        }
         document.getElementById('resultsContainer').style.display = 'none';
         return;
     }
@@ -490,6 +534,8 @@ function inicializarResultados() {
     
     // Inicializa filtros
     inicializarFiltros();
+    
+    inicializarPanelFiltros();
 
     const swapButton = document.getElementById('swapRouteBtnResults');
     if (swapButton) {
@@ -516,6 +562,28 @@ function inicializarResultados() {
             }
         });
     }
+}
+
+/**
+ * Gestiona el panel de filtros plegable (sidebar) para Escritorio y Móvil
+ */
+function inicializarPanelFiltros() {
+    const btnToggle = document.getElementById('toggleFilters');
+    const btnClose = document.getElementById('closeFilters');
+    const sidebar = document.getElementById('filtersSidebar');
+
+    if (!btnToggle || !sidebar) return;
+
+    const toggle = () => sidebar.classList.toggle('active');
+
+    btnToggle.addEventListener('click', toggle);
+    if (btnClose) btnClose.addEventListener('click', toggle);
+
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth < 992 && sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btnToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
 }
 
 /**
@@ -702,11 +770,13 @@ function inicializarFiltros() {
     const clearFilters = document.getElementById('clearFilters');
     const sortSelect = document.getElementById('sortSelect');
 
+    if (!vuelosActuales || vuelosActuales.length === 0) return;
+
     const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
     const pasajeros = parseInt(criterios.pasajeros) || 1;
 
     priceRange.addEventListener('input', function() {
-        priceMax.textContent = '$' + this.value;
+        priceMax.textContent = formatearMoneda(this.value);
         aplicarFiltros();
     });
 
@@ -723,24 +793,33 @@ function inicializarFiltros() {
     }
 
     clearFilters.addEventListener('click', function() {
-        const precioMaximo = Math.max(...vuelosActuales.map(v => calcularPrecioTotal(v))) * pasajeros;
+        const precios = vuelosActuales.map(v => calcularPrecioTotal(v));
+        const precioMaximo = Math.max(...precios) * pasajeros;
+        
         priceRange.value = precioMaximo;
         priceRange.max = precioMaximo;
-        priceMax.textContent = '$' + precioMaximo;
+        priceMax.textContent = formatearMoneda(precioMaximo);
+        
         document.querySelectorAll('.escalasFilter, .horarioFilter').forEach(cb => cb.checked = true);
         document.querySelectorAll('.airlineFilter').forEach(cb => cb.checked = true);
         if (sortSelect) sortSelect.value = 'precioAsc';
         aplicarFiltros();
     });
 
-    // Máximo considera pasajeros
-    const precioMaximo = Math.max(...vuelosActuales.map(v => calcularPrecioTotal(v))) * pasajeros;
+    // Inicializar rango de precios dinámicamente según los resultados reales
+    const precios = vuelosActuales.map(v => calcularPrecioTotal(v));
+    const precioMaximo = Math.max(...precios) * pasajeros;
+    
     priceRange.max = precioMaximo;
+    priceRange.min = Math.min(...precios) * pasajeros;
     priceRange.value = precioMaximo;
-    priceMax.textContent = '$' + precioMaximo;
+    priceMax.textContent = formatearMoneda(precioMaximo);
+    priceMin.textContent = formatearMoneda(priceRange.min);
 }
 
 function aplicarFiltros() {
+    if (!vuelosActuales || vuelosActuales.length === 0) return;
+
     const criterios = JSON.parse(sessionStorage.getItem('criteriosBusqueda') || '{}');
     const pasajeros = parseInt(criterios.pasajeros) || 1;
     const precioMaximoTotal = parseInt(document.getElementById('priceRange').value);
@@ -758,11 +837,16 @@ function aplicarFiltros() {
     const aerolineasSeleccionadas = obtenerAerolineasSeleccionadas();
     const ordenSeleccionado = document.getElementById('sortSelect')?.value || 'precioAsc';
 
+    // Si el usuario desmarca todas las escalas u horarios, por UX mostramos todos en lugar de nada
+    // o podemos mantener la lógica estricta. Aquí la hacemos flexible:
+    const escalasFinal = escalasSeleccionadas.length === 0 ? [0, 1, 2] : escalasSeleccionadas;
+    const horariosFinal = horariosSeleccionados.length === 0 ? ['mañana', 'tarde', 'noche'] : horariosSeleccionados;
+
     // Filtra por precio por persona (divide el máximo entre pasajeros)
     const filtros = {
         precioMaximo: Math.ceil(precioMaximoTotal / pasajeros),
-        escalas: escalasSeleccionadas,
-        horarios: horariosSeleccionados,
+        escalas: escalasFinal,
+        horarios: horariosFinal,
         aerolineas: aerolineasSeleccionadas
     };
 

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
+<div id="filtersOverlay"></div>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
@@ -15,9 +16,14 @@
             <a class="navbar-brand fw-bold" href="index.html">
                 <i class="fas fa-plane-departure text-primary"></i> ReservaVuelos
             </a>
-            <a href="index.html" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-arrow-left"></i> Nueva búsqueda
-            </a>
+            <div class="d-flex gap-2">
+                <button id="darkModeBtn" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="index.html" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Nueva búsqueda
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -25,83 +31,42 @@
     <section class="search-summary bg-light py-4 sticky-top" style="top: 56px; z-index: 99;">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-8">
+                <div class="col-8 col-md-8">
                     <p class="mb-0">
                         <strong id="rutaInfo"></strong>
                         <span class="text-muted ms-3" id="fechaInfo"></span>
                     </p>
                 </div>
-                <div class="col-md-4 text-end">
-                    <button class="btn btn-link btn-sm" data-bs-toggle="collapse" href="#searchForm" role="button">
-                        <i class="fas fa-edit"></i> Modificar búsqueda
+                <div class="col-4 col-md-4 text-end">
+                    <button class="btn btn-outline-primary btn-sm me-2 d-lg-none" id="toggleFilters">
+                        <i class="fas fa-sliders-h"></i> Filtros
                     </button>
+                    <a href="index.html" class="btn btn-link btn-sm text-decoration-none">
+                        <i class="fas fa-edit"></i> Modificar búsqueda
+                    </a>
                 </div>
             </div>
-            <form id="searchForm" class="collapse mt-3">
-                <div class="row g-2 align-items-end">
-                    <div class="col-md-3">
-                        <div class="airport-autocomplete" data-airport-autocomplete data-clearable>
-                            <label for="origen" class="form-label fw-bold small mb-1">Origen</label>
-                            <div class="position-relative">
-                                <input type="text" class="form-control form-control-sm airport-input" id="origen" data-airport-input="origen" data-airport-code-target="origenCodigo" placeholder="Ciudad, país o aeropuerto" autocomplete="off">
-                                <input type="hidden" id="origenCodigo" data-airport-code>
-                                <div class="airport-suggestions" data-airport-suggestions></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-1 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light btn-sm swap-route-btn swap-route-btn-sm" id="swapRouteBtnResults" aria-label="Intercambiar origen y destino">
-                            <i class="fas fa-exchange-alt"></i>
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="airport-autocomplete" data-airport-autocomplete data-clearable>
-                            <label for="destino" class="form-label fw-bold small mb-1">Destino</label>
-                            <div class="position-relative">
-                                <input type="text" class="form-control form-control-sm airport-input" id="destino" data-airport-input="destino" data-airport-code-target="destinoCodigo" placeholder="Ciudad, país o aeropuerto" autocomplete="off">
-                                <input type="hidden" id="destinoCodigo" data-airport-code>
-                                <div class="airport-suggestions" data-airport-suggestions></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="fechaSalida" class="form-label fw-bold small mb-1">Salida</label>
-                        <input type="date" class="form-control form-control-sm" id="fechaSalida">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="fechaRegreso" class="form-label fw-bold small mb-1">Regreso</label>
-                        <input type="date" class="form-control form-control-sm" id="fechaRegreso">
-                    </div>
-                    <div class="col-md-1">
-                        <label for="pasajeros" class="form-label fw-bold small mb-1">Pasajeros</label>
-                        <select class="form-select form-select-sm" id="pasajeros">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5+</option>
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-primary btn-sm w-100">Buscar</button>
-                    </div>
-                </div>
-            </form>
         </div>
     </section>
 
     <!-- Main Content -->
     <div class="container-fluid py-4">
         <div class="row g-4">
+
             <!-- Filters Sidebar -->
-            <div class="col-lg-3">
+            <div class="col-lg-3" id="filtersSidebar">
                 <div class="card border-0 shadow-sm sticky-top" style="top: 200px;">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-4">
-                            <i class="fas fa-sliders-h"></i> Filtros
-                        </h5>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">
+                                <i class="fas fa-sliders-h"></i> Filtros
+                            </h5>
+                            <button class="btn btn-sm btn-outline-secondary d-lg-none" id="closeFilters">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
 
-                        <!-- Filtro Precio -->
+                        <!-- Ordenar -->
                         <div class="mb-4">
                             <label class="form-label fw-bold">Ordenar por</label>
                             <select class="form-select mb-3" id="sortSelect">
@@ -114,95 +79,94 @@
                             </select>
                         </div>
 
+                        <!-- Precio -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Precio</label>
-                            <div class="d-flex gap-2 mb-2">
-                                <span class="badge bg-light text-dark" id="priceMin">$0</span>
-                                <span class="badge bg-light text-dark" id="priceMax">$1000</span>
+                            <div class="d-flex justify-content-between align-items-center mb-2" data-bs-toggle="collapse" href="#collapsePrecio" role="button">
+                                <label class="form-label fw-bold mb-0">Precio Máximo</label>
+                                <i class="fas fa-chevron-down fa-xs"></i>
                             </div>
-                            <input 
-                                type="range" 
-                                class="form-range" 
-                                id="priceRange" 
-                                min="0" 
-                                max="1000" 
-                                value="1000"
-                            >
+                            <div class="collapse show" id="collapsePrecio">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-light text-dark" id="priceMin">$0</span>
+                                    <span class="badge bg-light text-dark" id="priceMax">$1000</span>
+                                </div>
+                                <input type="range" class="form-range" id="priceRange" min="0" max="1000" value="1000">
+                            </div>
                         </div>
 
-                        <!-- Filtro Escalas -->
+                        <!-- Aerolínea -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Aerolínea</label>
-                            <div class="airline-filter-list">
-                                <div class="form-check">
-                                    <input class="form-check-input airlineFilter" type="checkbox" value="LA" id="airlineLATAM" checked>
-                                    <label class="form-check-label" for="airlineLATAM">LATAM</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input airlineFilter" type="checkbox" value="SK" id="airlineSky" checked>
-                                    <label class="form-check-label" for="airlineSky">Sky Airline</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input airlineFilter" type="checkbox" value="JS" id="airlineJetSmart" checked>
-                                    <label class="form-check-label" for="airlineJetSmart">JetSmart</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input airlineFilter" type="checkbox" value="IB" id="airlineIberia" checked>
-                                    <label class="form-check-label" for="airlineIberia">Iberia</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input airlineFilter" type="checkbox" value="AA" id="airlineAmerican" checked>
-                                    <label class="form-check-label" for="airlineAmerican">American Airlines</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input airlineFilter" type="checkbox" value="AF" id="airlineAirFrance" checked>
-                                    <label class="form-check-label" for="airlineAirFrance">Air France</label>
+                            <div class="d-flex justify-content-between align-items-center mb-2" data-bs-toggle="collapse" href="#collapseAero" role="button">
+                                <label class="form-label fw-bold mb-0">Aerolínea</label>
+                                <i class="fas fa-chevron-down fa-xs"></i>
+                            </div>
+                            <div class="collapse show" id="collapseAero">
+                                <div class="airline-filter-list pt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input airlineFilter" type="checkbox" value="LA" id="airlineLATAM" checked>
+                                        <label class="form-check-label" for="airlineLATAM">LATAM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input airlineFilter" type="checkbox" value="SK" id="airlineSky" checked>
+                                        <label class="form-check-label" for="airlineSky">Sky Airline</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input airlineFilter" type="checkbox" value="JS" id="airlineJetSmart" checked>
+                                        <label class="form-check-label" for="airlineJetSmart">JetSmart</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input airlineFilter" type="checkbox" value="IB" id="airlineIberia" checked>
+                                        <label class="form-check-label" for="airlineIberia">Iberia</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Escalas -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Escalas</label>
-                            <div class="form-check">
-                                <input class="form-check-input escalasFilter" type="checkbox" value="0" id="directos" checked>
-                                <label class="form-check-label" for="directos">
-                                    Directos
-                                </label>
+                            <div class="d-flex justify-content-between align-items-center mb-2" data-bs-toggle="collapse" href="#collapseEscalas" role="button">
+                                <label class="form-label fw-bold mb-0">Escalas</label>
+                                <i class="fas fa-chevron-down fa-xs"></i>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input escalasFilter" type="checkbox" value="1" id="unaEscala" checked>
-                                <label class="form-check-label" for="unaEscala">
-                                    1 Escala
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input escalasFilter" type="checkbox" value="2" id="dosEscalas" checked>
-                                <label class="form-check-label" for="dosEscalas">
-                                    2+ Escalas
-                                </label>
+                            <div class="collapse show" id="collapseEscalas">
+                                <div class="pt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input escalasFilter" type="checkbox" value="0" id="directos" checked>
+                                        <label class="form-check-label" for="directos">Directos</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input escalasFilter" type="checkbox" value="1" id="unaEscala" checked>
+                                        <label class="form-check-label" for="unaEscala">1 Escala</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input escalasFilter" type="checkbox" value="2" id="dosEscalas" checked>
+                                        <label class="form-check-label" for="dosEscalas">2+ Escalas</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Filtro Horario -->
+                        <!-- Horario -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Salida</label>
-                            <div class="form-check">
-                                <input class="form-check-input horarioFilter" type="checkbox" value="mañana" id="mañana" checked>
-                                <label class="form-check-label" for="mañana">
-                                    Mañana (6:00-12:00)
-                                </label>
+                            <div class="d-flex justify-content-between align-items-center mb-2" data-bs-toggle="collapse" href="#collapseHorario" role="button">
+                                <label class="form-label fw-bold mb-0">Salida</label>
+                                <i class="fas fa-chevron-down fa-xs"></i>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input horarioFilter" type="checkbox" value="tarde" id="tarde" checked>
-                                <label class="form-check-label" for="tarde">
-                                    Tarde (12:00-18:00)
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input horarioFilter" type="checkbox" value="noche" id="noche" checked>
-                                <label class="form-check-label" for="noche">
-                                    Noche (18:00-23:59)
-                                </label>
+                            <div class="collapse show" id="collapseHorario">
+                                <div class="pt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input horarioFilter" type="checkbox" value="mañana" id="mañana" checked>
+                                        <label class="form-check-label" for="mañana">Mañana (6:00-12:00)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input horarioFilter" type="checkbox" value="tarde" id="tarde" checked>
+                                        <label class="form-check-label" for="tarde">Tarde (12:00-18:00)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input horarioFilter" type="checkbox" value="noche" id="noche" checked>
+                                        <label class="form-check-label" for="noche">Noche (18:00-23:59)</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -215,14 +179,6 @@
 
             <!-- Results -->
             <div class="col-lg-9">
-                <!-- Loading State -->
-                <div id="loadingState" class="text-center py-5" style="display: none;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                    <p class="mt-3 text-muted">Buscando los mejores vuelos para ti...</p>
-                </div>
-
                 <!-- Empty State -->
                 <div id="emptyState" class="text-center py-5" style="display: none;">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
@@ -231,9 +187,7 @@
                 </div>
 
                 <!-- Results Container -->
-                <div id="resultsContainer" class="results-container">
-                    <!-- Los vuelos se cargarán aquí con JavaScript -->
-                </div>
+                <div id="resultsContainer" class="results-container"></div>
 
                 <!-- Pagination -->
                 <nav id="paginationNav" class="mt-5" style="display: none;">
@@ -286,5 +240,6 @@
     <script src="js/vuelos.js"></script>
     <script src="js/reserva.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/chatbot.js"></script>
 </body>
 </html>

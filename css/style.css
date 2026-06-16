@@ -1229,3 +1229,63 @@ body.dark-mode #chatbot-input {
 body.dark-mode #chatbot-input-area {
     border-color: #334155;
 }
+/* ============================================
+   FILTROS MÓVIL - OVERLAY
+   ============================================ */
+@media (max-width: 991px) {
+    #filtersSidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1050;
+        background: white;
+        padding: 16px;
+        transition: left 0.3s ease;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    }
+
+    #filtersSidebar.active {
+        left: 0;
+    }
+
+    #filtersSidebar .sticky-top {
+        position: relative !important;
+        top: auto !important;
+    }
+
+    #filtersSidebar .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Overlay oscuro detrás del panel */
+    #filtersOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1049;
+    }
+
+    #filtersOverlay.active {
+        display: block;
+    }
+
+    body.dark-mode #filtersSidebar {
+        background: #1e293b;
+    }
+
+    /* Oculta el col vacío en móvil */
+    .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+}
