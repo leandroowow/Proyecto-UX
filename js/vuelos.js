@@ -5,16 +5,18 @@
 
 const aerolineas = [
     { codigo: 'LA', nombre: 'LATAM Airlines' },
+    { codigo: 'SK', nombre: 'Sky Airline' },
+    { codigo: 'JS', nombre: 'JetSmart' },
+    { codigo: 'IB', nombre: 'Iberia' },
+    { codigo: 'AA', nombre: 'American Airlines' },
+    { codigo: 'AF', nombre: 'Air France' },
     { codigo: 'AV', nombre: 'Avianca' },
     { codigo: 'AM', nombre: 'Aeroméxico' },
     { codigo: 'UA', nombre: 'United Airlines' },
-    { codigo: 'IB', nombre: 'Iberia' },
-    { codigo: 'AF', nombre: 'Air France' },
     { codigo: 'AZ', nombre: 'ITA Airways' },
     { codigo: 'BA', nombre: 'British Airways' },
     { codigo: 'LH', nombre: 'Lufthansa' },
-    { codigo: 'QF', nombre: 'Qantas' },
-    { codigo: 'NH', nombre: 'ANA' }
+    { codigo: 'QF', nombre: 'Qantas' }
 ];
 
 const aeropuertos = [
@@ -193,8 +195,16 @@ function buscarAeropuertos(consulta) {
 }
 
 function resolverAeropuertoEntrada(entrada) {
+    if (!entrada) return null;
+
+    // Intento 0: Detectar formato "Ciudad, País (IATA)" para mayor estabilidad
+    const match = String(entrada).match(/\(([A-Z]{3})\)\s*$/i);
+    if (match) {
+        const aero = obtenerAeropuertoPorIata(match[1]);
+        if (aero) return aero;
+    }
+
     const texto = normalizarTexto(entrada);
-    if (!texto) return null;
 
     const porIata = obtenerAeropuertoPorIata(texto);
     if (porIata) return porIata;

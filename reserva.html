@@ -58,7 +58,7 @@
                             <i class="fas fa-user-circle"></i> Datos del Pasajero
                         </h3>
 
-                        <form id="reservaForm">
+                        <form id="reservaForm" class="needs-validation" novalidate>
                             <!-- Nombre Completo -->
                             <div class="mb-4 position-relative" data-clearable>
                                 <label for="nombre" class="form-label fw-bold">Nombre Completo *</label>
@@ -66,7 +66,9 @@
                                     type="text" 
                                     class="form-control form-control-lg" 
                                     id="nombre" 
-                                    placeholder="Ej: Juan Pérez García"
+                                    placeholder="Ej: manuel Pérez García"
+                                    autocomplete="name"
+                                    minlength="3"
                                     required
                                 >
                                 <small class="text-muted">Como aparece en tu pasaporte o cédula</small>
@@ -81,6 +83,7 @@
                                     class="form-control form-control-lg" 
                                     id="correo" 
                                     placeholder="tu@email.com"
+                                    autocomplete="email"
                                     required
                                 >
                                 <small class="text-muted">Recibirás la confirmación aquí</small>
@@ -95,6 +98,7 @@
                                     class="form-control form-control-lg" 
                                     id="telefono" 
                                     placeholder="+57 3XX XXXXXXX"
+                                    autocomplete="tel"
                                     required
                                 >
                                 <small class="text-muted">Incluye el código de país</small>

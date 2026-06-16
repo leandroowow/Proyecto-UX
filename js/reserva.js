@@ -108,6 +108,11 @@ function validarCorreo(correo) {
 function validarTelefono(telefono) {
     telefono = telefono.trim();
     
+    // Verifica que el número comience con el signo +
+    if (!telefono.startsWith('+')) {
+        return { valido: false, error: 'El número debe incluir el prefijo internacional con el signo + (ej: +56)' };
+    }
+
     // Extrae solo números y símbolos válidos
     const soloNumeros = telefono.replace(/[^\d+\-\s()]/g, '');
     
@@ -123,7 +128,7 @@ function validarTelefono(telefono) {
     }
     
     // Valida formato básico
-    if (!/^[\d+\-\s()]+$/.test(telefono)) {
+    if (!/^\+[\d\-\s()]+$/.test(telefono)) {
         return { valido: false, error: 'El teléfono contiene caracteres no válidos' };
     }
     
