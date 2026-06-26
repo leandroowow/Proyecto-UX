@@ -135,21 +135,33 @@ function descargarPDFConfirmacion() {
     const pdf = new jsPDF();
     const vuelo = reserva.vuelo;
     const pasajero = reserva.pasajero || {};
-        const claseNombre = reserva.claseNombre || obtenerClaseVuelo(reserva.claseVuelo || 'economica').nombre;
+    const claseNombre = reserva.claseNombre || obtenerClaseVuelo(reserva.claseVuelo || 'economica').nombre;
 
     pdf.setFontSize(18);
     pdf.text('ReservaVuelos - Confirmacion', 14, 20);
     pdf.setFontSize(12);
     pdf.text(`Codigo: ${reserva.codigoReserva || ''}`, 14, 32);
     pdf.text(`Pasajero: ${pasajero.nombre || ''}`, 14, 42);
-    pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 50);
-    pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 58);
-    pdf.text(`Aerolinea: ${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}`, 14, 70);
-    pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 78);
-    pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 86);
-    pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 94);
+    if (pasajero.rut) {
+        pdf.text(`RUT: ${pasajero.rut}`, 14, 50);
+        pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 58);
+        pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 66);
+        pdf.text(`Aerolinea: ${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}`, 14, 78);
+        pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 86);
+        pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 94);
+        pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 102);
+        pdf.text(`Clase: ${claseNombre}`, 14, 110);
+        pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 118);
+    } else {
+        pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 50);
+        pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 58);
+        pdf.text(`Aerolinea: ${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}`, 14, 70);
+        pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 78);
+        pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 86);
+        pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 94);
         pdf.text(`Clase: ${claseNombre}`, 14, 102);
         pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 110);
+    }
 
     pdf.save(`confirmacion-${reserva.codigoReserva || 'reserva'}.pdf`);
 }
@@ -877,6 +889,26 @@ function inicializarReserva() {
             actualizarDetallesPrecios(vueloSelec, this.value);
         });
     }
+
+    // Event listener para autocompletar
+    const autocompletarBtn = document.getElementById('autocompletarBtn');
+    if (autocompletarBtn) {
+        autocompletarBtn.addEventListener('click', autocompletarDatosDePrueba);
+    }
+
+    // Formatear RUT al perder el foco
+    const rutInput = document.getElementById('rut');
+    if (rutInput) {
+        rutInput.addEventListener('blur', function() {
+            const val = this.value;
+            const valid = validarRutChileno(val);
+            if (valid.valido) {
+                this.value = formatearRutChileno(val);
+                this.classList.remove('is-invalid');
+                document.getElementById('rutError').textContent = '';
+            }
+        });
+    }
     
     // Event listener para formulario
     const formulario = document.getElementById('reservaForm');
@@ -1103,6 +1135,9 @@ function inicializarConfirmacion() {
     
     // Datos del pasajero
     document.getElementById('confirmNombre').textContent = pasajero.nombre;
+    if (document.getElementById('confirmRut')) {
+        document.getElementById('confirmRut').textContent = pasajero.rut || 'No proporcionado';
+    }
     document.getElementById('confirmCorreo').textContent = pasajero.correo;
     document.getElementById('confirmTelefono').textContent = formatearTelefono(pasajero.telefono);
 
