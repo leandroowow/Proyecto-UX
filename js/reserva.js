@@ -8,6 +8,7 @@ let reservaActual = {
     vuelo: null,
     pasajero: {
         nombre: '',
+        rut: '',
         correo: '',
         telefono: ''
     },
@@ -136,11 +137,191 @@ function validarTelefono(telefono) {
 }
 
 /**
+ * Valida un RUT chileno
+ * @param {string} rut - RUT a validar
+ * @returns {object} { valido: boolean, error: string }
+ */
+function validarRutChileno(rut) {
+    rut = rut.trim();
+    if (!rut) {
+        return { valido: false, error: 'Por favor ingresa tu RUT' };
+    }
+
+    // Eliminar puntos, guiones y espacios
+    let valor = rut.replace(/\./g, '').replace(/\s/g, '').replace(/-/g, '').toUpperCase();
+
+    // Validar longitud básica (entre 8 y 9 caracteres: 7-8 dígitos + DV)
+    if (valor.length < 8 || valor.length > 9) {
+        return { valido: false, error: 'El RUT debe tener entre 8 y 9 caracteres' };
+    }
+
+    // Separar cuerpo y dígito verificador
+    let cuerpo = valor.slice(0, -1);
+    let dv = valor.slice(-1);
+
+    // Validar que el cuerpo contenga solo números y el DV sea 0-9 o K
+    if (!/^\d+$/.test(cuerpo) || !/^[0-9K]$/.test(dv)) {
+        return { valido: false, error: 'El RUT contiene caracteres no válidos' };
+    }
+
+    // Calcular dígito verificador esperado (Módulo 11)
+    let suma = 0;
+    let multiplo = 2;
+
+    for (let i = cuerpo.length - 1; i >= 0; i--) {
+        suma += parseInt(cuerpo.charAt(i)) * multiplo;
+        multiplo = multiplo === 7 ? 2 : multiplo + 1;
+    }
+
+    let dvEsperado = 11 - (suma % 11);
+    let dvChar = '';
+    if (dvEsperado === 11) {
+        dvChar = '0';
+    } else if (dvEsperado === 10) {
+        dvChar = 'K';
+    } else {
+        dvChar = dvEsperado.toString();
+    }
+
+    if (dv !== dvChar) {
+        return { valido: false, error: 'El RUT ingresado no es válido (dígito verificador incorrecto)' };
+    }
+
+    return { valido: true, error: '' };
+}
+
+/**
+ * Formatea un RUT chileno (agrega puntos y guion)
+ * @param {string} rut - RUT a formatear
+ * @returns {string} RUT formateado (ej: 12.345.678-5)
+ */
+function formatearRutChileno(rut) {
+    let valor = rut.replace(/\./g, '').replace(/\s/g, '').replace(/-/g, '').toUpperCase();
+    if (valor.length < 8) return rut;
+
+    let cuerpo = valor.slice(0, -1);
+    let dv = valor.slice(-1);
+
+    let cuerpoFormateado = '';
+    while (cuerpo.length > 3) {
+        cuerpoFormateado = '.' + cuerpo.slice(-3) + cuerpoFormateado;
+        cuerpo = cuerpo.slice(0, -3);
+    }
+    cuerpoFormateado = cuerpo + cuerpoFormateado;
+
+    return cuerpoFormateado + '-' + dv;
+}
+
+/**
+ * Genera un RUT chileno válido aleatorio
+ * @returns {string} RUT chileno formateado válido
+ */
+function generarRutAleatorio() {
+    // Generar un cuerpo aleatorio entre 5.000.000 y 25.000.000
+    const cuerpo = Math.floor(Math.random() * (25000000 - 5000000)) + 5000000;
+    const cuerpoStr = cuerpo.toString();
+
+    let suma = 0;
+    let multiplo = 2;
+    for (let i = cuerpoStr.length - 1; i >= 0; i--) {
+        suma += parseInt(cuerpoStr.charAt(i)) * multiplo;
+        multiplo = multiplo === 7 ? 2 : multiplo + 1;
+    }
+
+    let dvEsperado = 11 - (suma % 11);
+    let dvChar = '';
+    if (dvEsperado === 11) {
+        dvChar = '0';
+    } else if (dvEsperado === 10) {
+        dvChar = 'K';
+    } else {
+        dvChar = dvEsperado.toString();
+    }
+
+    return formatearRutChileno(cuerpoStr + dvChar);
+}
+
+// Lista de nombres de prueba
+const nombresPrueba = [
+    'Sebastián Andrés Muñoz Castro',
+    'Camila Ignacia Rojas Vergara',
+    'Diego Alejandro Silva Fuentes',
+    'Javiera Belén Contreras Soto',
+    'Nicolás Esteban Sepúlveda Flores',
+    'María José Morales Espinoza',
+    'Felipe Antonio Valenzuela Reyes',
+    'Francisca Andrea Ramírez Carrasco',
+    'Cristóbal Daniel Henríquez Lobos',
+    'Valentina Paz Araya González'
+];
+
+/**
+ * Normaliza un nombre para generar un correo
+ * @param {string} nombre
+ * @returns {string} Correo generado
+ */
+function normalizarEmail(nombre) {
+    return nombre
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // quitar acentos
+        .replace(/[^a-z0-9\s]/g, "")
+        .trim()
+        .replace(/\s+/g, ".") + "@email.cl";
+}
+
+/**
+ * Genera un teléfono chileno aleatorio (+56 9 XXXXXXXX)
+ * @returns {string} Teléfono formateado
+ */
+function generarTelefonoChile() {
+    let num = '';
+    for (let i = 0; i < 8; i++) {
+        num += Math.floor(Math.random() * 10);
+    }
+    return `+56 9 ${num.slice(0, 4)} ${num.slice(4)}`;
+}
+
+/**
+ * Autocompleta los campos del formulario con datos de prueba
+ */
+function autocompletarDatosDePrueba() {
+    const nombreAleatorio = nombresPrueba[Math.floor(Math.random() * nombresPrueba.length)];
+    const rutAleatorio = generarRutAleatorio();
+    const correoAleatorio = normalizarEmail(nombreAleatorio);
+    const telefonoAleatorio = generarTelefonoChile();
+
+    const fields = {
+        'nombre': nombreAleatorio,
+        'rut': rutAleatorio,
+        'correo': correoAleatorio,
+        'telefono': telefonoAleatorio
+    };
+
+    for (const [id, val] of Object.entries(fields)) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = val;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+
+    // Aceptar términos y condiciones
+    const terminos = document.getElementById('terminos');
+    if (terminos) {
+        terminos.checked = true;
+        terminos.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+}
+
+/**
  * Valida todo el formulario de reserva
  * @returns {boolean} True si el formulario es válido
  */
 function validarFormularioReserva() {
     const nombre = document.getElementById('nombre').value;
+    const rut = document.getElementById('rut').value;
     const correo = document.getElementById('correo').value;
     const telefono = document.getElementById('telefono').value;
     const terminos = document.getElementById('terminos').checked;
@@ -156,6 +337,18 @@ function validarFormularioReserva() {
     } else {
         document.getElementById('nombre').classList.remove('is-invalid');
         document.getElementById('nombreError').textContent = '';
+    }
+
+    // Valida RUT
+    const validRut = validarRutChileno(rut);
+    if (!validRut.valido) {
+        document.getElementById('rutError').textContent = validRut.error;
+        document.getElementById('rut').classList.add('is-invalid');
+        esValido = false;
+    } else {
+        document.getElementById('rut').value = formatearRutChileno(rut);
+        document.getElementById('rut').classList.remove('is-invalid');
+        document.getElementById('rutError').textContent = '';
     }
     
     // Valida correo
@@ -310,6 +503,7 @@ function actualizarDetallesPrecios(vuelo, claseCodigo) {
  */
 function guardarDatosPasajero() {
     reservaActual.pasajero.nombre = document.getElementById('nombre').value.trim();
+    reservaActual.pasajero.rut = document.getElementById('rut').value.trim();
     reservaActual.pasajero.correo = document.getElementById('correo').value.trim().toLowerCase();
     reservaActual.pasajero.telefono = document.getElementById('telefono').value.trim();
 }
@@ -332,6 +526,7 @@ function limpiarReservaActual() {
         vuelo: null,
         pasajero: {
             nombre: '',
+            rut: '',
             correo: '',
             telefono: ''
         },
