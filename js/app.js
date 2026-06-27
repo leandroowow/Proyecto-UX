@@ -135,21 +135,33 @@ function descargarPDFConfirmacion() {
     const pdf = new jsPDF();
     const vuelo = reserva.vuelo;
     const pasajero = reserva.pasajero || {};
-        const claseNombre = reserva.claseNombre || obtenerClaseVuelo(reserva.claseVuelo || 'economica').nombre;
+    const claseNombre = reserva.claseNombre || obtenerClaseVuelo(reserva.claseVuelo || 'economica').nombre;
 
     pdf.setFontSize(18);
     pdf.text('ReservaVuelos - Confirmacion', 14, 20);
     pdf.setFontSize(12);
     pdf.text(`Codigo: ${reserva.codigoReserva || ''}`, 14, 32);
     pdf.text(`Pasajero: ${pasajero.nombre || ''}`, 14, 42);
-    pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 50);
-    pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 58);
-    pdf.text(`Aerolinea: ${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}`, 14, 70);
-    pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 78);
-    pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 86);
-    pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 94);
+    if (pasajero.rut) {
+        pdf.text(`RUT: ${pasajero.rut}`, 14, 50);
+        pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 58);
+        pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 66);
+        pdf.text(`Aerolinea: ${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}`, 14, 78);
+        pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 86);
+        pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 94);
+        pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 102);
+        pdf.text(`Clase: ${claseNombre}`, 14, 110);
+        pdf.text(`Precio total: ${formatearMoneda(reserva.total || calcularPrecioTotal(vuelo) || 0)}`, 14, 118);
+    } else {
+        pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 50);
+        pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 58);
+        pdf.text(`Aerolinea: ${obtenerNombreAerolinea(vuelo.aerolinea)} ${vuelo.numero || ''}`, 14, 70);
+        pdf.text(`Ruta: ${formatearAeropuerto(vuelo.origen)} -> ${formatearAeropuerto(vuelo.destino)}`, 14, 78);
+        pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 86);
+        pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 94);
         pdf.text(`Clase: ${claseNombre}`, 14, 102);
-        pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 110);
+        pdf.text(`Precio total: ${formatearMoneda(reserva.total || calcularPrecioTotal(vuelo) || 0)}`, 14, 110);
+    }
 
     pdf.save(`confirmacion-${reserva.codigoReserva || 'reserva'}.pdf`);
 }
@@ -657,7 +669,7 @@ function crearTarjetaVuelo(vuelo) {
     const classEscalas  = vuelo.escalas === 0 ? 'flight-scales direct' : 'flight-scales';
 
     const textoPasajeros = pasajeros > 1
-        ? `<div class="text-muted small mt-1">$${precioPersona} x ${pasajeros} personas</div>`
+        ? `<div class="text-muted small mt-1">${formatearMoneda(precioPersona)} x ${pasajeros} personas</div>`
         : `<div class="text-muted small mt-1">precio por persona</div>`;
 
     tarjeta.innerHTML = `
@@ -683,7 +695,7 @@ function crearTarjetaVuelo(vuelo) {
             </div>
             <div class="flight-price">
                 <div class="price-label">total</div>
-                <div class="price">$${precioTotal}</div>
+                <div class="price">${formatearMoneda(precioTotal)}</div>
                 ${textoPasajeros}
                 <button class="btn btn-primary btn-sm fw-bold mt-2" data-vuelo-id="${vuelo.id}">
                     Reservar
@@ -738,7 +750,7 @@ function mostrarModalReserva(vuelo) {
         <div class="alert alert-info">
             <div class="d-flex justify-content-between mb-1">
                 <span>Precio por persona:</span>
-                <strong>$${precioPersona}</strong>
+                <strong>${formatearMoneda(precioPersona)}</strong>
             </div>
             <div class="d-flex justify-content-between mb-1">
                 <span>Pasajeros:</span>
@@ -746,7 +758,7 @@ function mostrarModalReserva(vuelo) {
             </div>
             <div class="d-flex justify-content-between border-top pt-2 mt-1">
                 <span class="fw-bold">Total:</span>
-                <strong>$${precioTotal}</strong>
+                <strong>${formatearMoneda(precioTotal)}</strong>
             </div>
             <p class="text-muted small mb-0 mt-2">Incluye: Tarifa + Impuestos + Equipaje</p>
         </div>
@@ -875,6 +887,26 @@ function inicializarReserva() {
         claseVueloSelect.addEventListener('change', function() {
             actualizarResumenVuelo(vueloSelec, this.value);
             actualizarDetallesPrecios(vueloSelec, this.value);
+        });
+    }
+
+    // Event listener para autocompletar
+    const autocompletarBtn = document.getElementById('autocompletarBtn');
+    if (autocompletarBtn) {
+        autocompletarBtn.addEventListener('click', autocompletarDatosDePrueba);
+    }
+
+    // Formatear RUT al perder el foco
+    const rutInput = document.getElementById('rut');
+    if (rutInput) {
+        rutInput.addEventListener('blur', function() {
+            const val = this.value;
+            const valid = validarRutChileno(val);
+            if (valid.valido) {
+                this.value = formatearRutChileno(val);
+                this.classList.remove('is-invalid');
+                document.getElementById('rutError').textContent = '';
+            }
         });
     }
     
@@ -1103,6 +1135,9 @@ function inicializarConfirmacion() {
     
     // Datos del pasajero
     document.getElementById('confirmNombre').textContent = pasajero.nombre;
+    if (document.getElementById('confirmRut')) {
+        document.getElementById('confirmRut').textContent = pasajero.rut || 'No proporcionado';
+    }
     document.getElementById('confirmCorreo').textContent = pasajero.correo;
     document.getElementById('confirmTelefono').textContent = formatearTelefono(pasajero.telefono);
 
@@ -1151,6 +1186,166 @@ function inicializarConfirmacion() {
     if (downloadPdfBtn) {
         downloadPdfBtn.addEventListener('click', descargarPDFConfirmacion);
     }
+
+    // Cargar recomendaciones de destinos
+    renderizarRecomendaciones(vuelo.destino, vuelo.fecha);
+}
+
+/**
+ * Obtiene destinos recomendados de la misma región (o cercanos en precio si faltan)
+ * @param {string} destinoReserva - Código IATA del destino reservado
+ * @param {string} fechaVuelo - Fecha de salida
+ * @returns {Array<string>} Array de códigos IATA recomendados
+ */
+function obtenerDestinosRecomendados(destinoReserva, fechaVuelo) {
+    const regionesAeropuertos = {
+        'MIA': 'Norteamérica', 'NYC': 'Norteamérica', 'YYZ': 'Norteamérica', 'MEX': 'Norteamérica', 'CUN': 'Norteamérica',
+        'SCL': 'Sudamérica', 'EZE': 'Sudamérica', 'GRU': 'Sudamérica', 'LIM': 'Sudamérica', 'BOG': 'Sudamérica', 'GIG': 'Sudamérica', 'CCS': 'Sudamérica',
+        'MAD': 'Europa', 'CDG': 'Europa', 'FCO': 'Europa', 'LHR': 'Europa', 'FRA': 'Europa',
+        'SYD': 'Asia-Pacífico', 'HND': 'Asia-Pacífico'
+    };
+
+    const regionDestino = regionesAeropuertos[destinoReserva] || 'Sudamérica';
+
+    // 1. Obtener candidatos de la misma región
+    let candidatosMismaRegion = Object.keys(regionesAeropuertos).filter(iata => 
+        regionesAeropuertos[iata] === regionDestino && 
+        iata !== destinoReserva && 
+        iata !== 'SCL'
+    );
+
+    // Si queremos 3, y hay suficientes candidatos en la misma región, los tomamos
+    let recomendados = candidatosMismaRegion.slice(0, 3);
+
+    // 2. Si faltan para llegar a 3, completamos con los más cercanos en precio
+    if (recomendados.length < 3) {
+        const reserva = JSON.parse(sessionStorage.getItem('reservaActual') || '{}');
+        const precioReservado = reserva.vuelo ? reserva.vuelo.precioBase : 500;
+
+        let otrosCandidatos = Object.keys(regionesAeropuertos).filter(iata => 
+            iata !== destinoReserva && 
+            iata !== 'SCL' && 
+            !recomendados.includes(iata)
+        );
+
+        // Buscar el precio de cada destino destacado
+        const obtenerPrecioBaseDestino = (iata) => {
+            const dest = destinosDestacados.find(d => d.iata === iata);
+            return dest ? Math.round(dest.precioBase * 0.95) : 500;
+        };
+
+        // Ordenar otros candidatos por diferencia absoluta de precio base
+        otrosCandidatos.sort((a, b) => {
+            const difA = Math.abs(obtenerPrecioBaseDestino(a) - precioReservado);
+            const difB = Math.abs(obtenerPrecioBaseDestino(b) - precioReservado);
+            return difA - difB;
+        });
+
+        // Completar hasta 3
+        while (recomendados.length < 3 && otrosCandidatos.length > 0) {
+            recomendados.push(otrosCandidatos.shift());
+        }
+    }
+
+    return recomendados;
+}
+
+/**
+ * Renderiza dinámicamente las tarjetas de recomendación
+ */
+function renderizarRecomendaciones(destinoReserva, fechaVuelo) {
+    const contenedorSection = document.getElementById('recomendacionesVuelosContainer');
+    const contenedorCards = document.getElementById('recomendacionesCardsRow');
+    if (!contenedorSection || !contenedorCards) return;
+
+    const recomendados = obtenerDestinosRecomendados(destinoReserva, fechaVuelo);
+    if (recomendados.length === 0) return;
+
+    contenedorCards.innerHTML = '';
+
+    recomendados.forEach(iata => {
+        const aeropuerto = obtenerAeropuertoPorIata(iata);
+        if (!aeropuerto) return;
+
+        // Buscar el vuelo más barato de SCL a iata
+        const vuelos = buscarVuelos({ origen: 'SCL', destino: iata, fecha: fechaVuelo });
+        let precioMasBarato = 0;
+        let vueloCheapest = null;
+
+        if (vuelos && vuelos.length > 0) {
+            const vuelosOrdenados = ordenarVuelosAvanzado(vuelos, 'precioAsc');
+            vueloCheapest = vuelosOrdenados[0];
+            precioMasBarato = calcularPrecioTotal(vueloCheapest);
+        } else {
+            // Fallback con fecha alternativa
+            const hoy = obtenerFechaActualISO();
+            const manana = sumarDiasISO(hoy, 1);
+            const fechaAlt = fechaVuelo === hoy ? manana : hoy;
+            const vuelosAlt = buscarVuelos({ origen: 'SCL', destino: iata, fecha: fechaAlt });
+            if (vuelosAlt && vuelosAlt.length > 0) {
+                const vuelosOrdenados = ordenarVuelosAvanzado(vuelosAlt, 'precioAsc');
+                vueloCheapest = vuelosOrdenados[0];
+                precioMasBarato = calcularPrecioTotal(vueloCheapest);
+            }
+        }
+
+        // Si no hay vuelos en ninguna de las fechas, estimamos el precio
+        if (!precioMasBarato) {
+            const dest = destinosDestacados.find(d => d.iata === iata);
+            const precioBase = dest ? Math.round(dest.precioBase * 0.95) : 500;
+            precioMasBarato = Math.round(precioBase * 1.12) + (dest ? dest.equipaje : 30);
+        }
+
+        const precioFormateado = formatearMoneda(precioMasBarato);
+
+        const cardHtml = `
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm info-card p-3 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="payment-icon bg-primary-subtle text-primary me-2 flex-shrink-0" style="width: 2.5rem; height: 2.5rem; font-size: 0.9rem;">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-truncate" style="max-width: 150px;">${aeropuerto.ciudad}</h6>
+                                <small class="text-muted mb-0">${aeropuerto.pais}</small>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-2">Vuelo desde Santiago (SCL)</p>
+                    </div>
+                    <div class="mt-auto pt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-baseline mb-3">
+                            <span class="text-muted small">Desde</span>
+                            <strong class="fs-5 text-primary">${precioFormateado}</strong>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm w-100 fw-bold" onclick="irARecomendacion('${iata}', '${fechaVuelo}')">
+                            <i class="fas fa-search me-1"></i> Buscar Vuelo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        contenedorCards.insertAdjacentHTML('beforeend', cardHtml);
+    });
+
+    contenedorSection.style.display = 'block';
+}
+
+/**
+ * Guarda criterios de recomendación y redirige a la página de resultados
+ */
+function irARecomendacion(iata, fechaVuelo) {
+    const criteriosBusqueda = {
+        origen: 'SCL',
+        destino: iata,
+        origenLabel: formatearAeropuerto('SCL'),
+        destinoLabel: formatearAeropuerto(iata),
+        fechaSalida: fechaVuelo,
+        fechaRegreso: null,
+        pasajeros: '1'
+    };
+    sessionStorage.setItem('criteriosBusqueda', JSON.stringify(criteriosBusqueda));
+    window.location.href = 'resultados.html';
 }
 
 /**

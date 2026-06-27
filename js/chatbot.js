@@ -318,8 +318,8 @@ function mostrarResultadoFinal() {
         🕐 Salida: <strong>${mejor.salida}</strong> · Llegada: <strong>${mejor.llegada}</strong><br>
         ⏱️ Duración: <strong>${mejor.duracion}</strong><br>
         👥 Pasajeros: <strong>${chatPasajeros}</strong><br>
-        💰 Por persona: <strong>$${totalPorPersona}</strong><br>
-        💳 Total ${chatPasajeros} personas: <strong>$${totalGeneral}</strong><br><br>
+        💰 Por persona: <strong>${formatearMoneda(totalPorPersona)}</strong><br>
+        💳 Total ${chatPasajeros} personas: <strong>${formatearMoneda(totalGeneral)}</strong><br><br>
         <button onclick="irAReservarDesdeChat('${chatDestino.iata}','${chatFecha}','${chatPasajeros}',${mejor.id})"
            class="btn btn-primary btn-sm mt-2">Reservar este vuelo</button>
         <button onclick="verTodosDesdeChat('${chatDestino.iata}','${chatFecha}','${chatPasajeros}')"
