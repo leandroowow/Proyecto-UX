@@ -244,24 +244,24 @@ function crearRutaBase(origen, destino, config) {
 }
 
 const destinosDestacados = [
-    { iata: 'EZE', duracionMinutos: 560,  precioBase: 650,  escalas: 0, equipaje: 30, horarios: ['07:20', '13:10', '20:25'] },
-    { iata: 'GRU', duracionMinutos: 510,  precioBase: 620,  escalas: 1, equipaje: 28, horarios: ['06:45', '14:00', '21:10'] },
-    { iata: 'LIM', duracionMinutos: 375,  precioBase: 540,  escalas: 0, equipaje: 25, horarios: ['05:55', '12:40', '18:30'] },
-    { iata: 'BOG', duracionMinutos: 255,  precioBase: 420,  escalas: 0, equipaje: 25, horarios: ['06:30', '10:20', '17:55'] },
-    { iata: 'MEX', duracionMinutos: 185,  precioBase: 390,  escalas: 0, equipaje: 23, horarios: ['08:15', '13:45', '22:05'] },
-    { iata: 'YYZ', duracionMinutos: 210,  precioBase: 430,  escalas: 0, equipaje: 24, horarios: ['07:00', '15:25', '21:50'] },
-    { iata: 'MAD', duracionMinutos: 515,  precioBase: 760,  escalas: 0, equipaje: 30, horarios: ['09:30', '16:15', '23:10'] },
-    { iata: 'CUN', duracionMinutos: 470,  precioBase: 880,  escalas: 1, equipaje: 32, horarios: ['08:50', '15:05', '22:20'] },
-    { iata: 'CDG', duracionMinutos: 575,  precioBase: 820,  escalas: 0, equipaje: 32, horarios: ['08:05', '14:55', '22:30'] },
-    { iata: 'FCO', duracionMinutos: 590,  precioBase: 800,  escalas: 0, equipaje: 31, horarios: ['07:40', '13:30', '21:00'] },
-    { iata: 'LHR', duracionMinutos: 580,  precioBase: 830,  escalas: 0, equipaje: 32, horarios: ['09:15', '15:50', '22:40'] },
-    { iata: 'FRA', duracionMinutos: 560,  precioBase: 810,  escalas: 0, equipaje: 32, horarios: ['06:50', '12:25', '20:35'] },
-    { iata: 'GIG', duracionMinutos: 315,  precioBase: 560,  escalas: 0, equipaje: 24, horarios: ['07:25', '13:45', '19:20'] },
-    { iata: 'SYD', duracionMinutos: 1035, precioBase: 1450, escalas: 1, equipaje: 35, horarios: ['07:15', '12:55', '19:40'] },
-    { iata: 'HND', duracionMinutos: 870,  precioBase: 1320, escalas: 1, equipaje: 34, horarios: ['08:25', '14:10', '22:00'] },
-    { iata: 'CCS', duracionMinutos: 210,  precioBase: 360,  escalas: 0, equipaje: 22, horarios: ['06:20', '12:15', '18:50'] },
-    { iata: 'MIA', duracionMinutos: 615,  precioBase: 690,  escalas: 0, equipaje: 32, horarios: ['06:10', '11:35', '19:45'] },
-    { iata: 'NYC', duracionMinutos: 720,  precioBase: 750,  escalas: 1, equipaje: 30, horarios: ['07:30', '14:20', '21:00'] },
+    { iata: 'EZE', duracionMinutos: 560,  precioBase: 585000,  escalas: 0, equipaje: 27000, horarios: ['07:20', '13:10', '20:25'] },
+    { iata: 'GRU', duracionMinutos: 510,  precioBase: 558000,  escalas: 1, equipaje: 25200, horarios: ['06:45', '14:00', '21:10'] },
+    { iata: 'LIM', duracionMinutos: 375,  precioBase: 486000,  escalas: 0, equipaje: 22500, horarios: ['05:55', '12:40', '18:30'] },
+    { iata: 'BOG', duracionMinutos: 255,  precioBase: 378000,  escalas: 0, equipaje: 22500, horarios: ['06:30', '10:20', '17:55'] },
+    { iata: 'MEX', duracionMinutos: 185,  precioBase: 351000,  escalas: 0, equipaje: 20700, horarios: ['08:15', '13:45', '22:05'] },
+    { iata: 'YYZ', duracionMinutos: 210,  precioBase: 387000,  escalas: 0, equipaje: 21600, horarios: ['07:00', '15:25', '21:50'] },
+    { iata: 'MAD', duracionMinutos: 515,  precioBase: 684000,  escalas: 0, equipaje: 27000, horarios: ['09:30', '16:15', '23:10'] },
+    { iata: 'CUN', duracionMinutos: 470,  precioBase: 792000,  escalas: 1, equipaje: 28800, horarios: ['08:50', '15:05', '22:20'] },
+    { iata: 'CDG', duracionMinutos: 575,  precioBase: 738000,  escalas: 0, equipaje: 28800, horarios: ['08:05', '14:55', '22:30'] },
+    { iata: 'FCO', duracionMinutos: 590,  precioBase: 720000,  escalas: 0, equipaje: 27900, horarios: ['07:40', '13:30', '21:00'] },
+    { iata: 'LHR', duracionMinutos: 580,  precioBase: 747000,  escalas: 0, equipaje: 28800, horarios: ['09:15', '15:50', '22:40'] },
+    { iata: 'FRA', duracionMinutos: 560,  precioBase: 729000,  escalas: 0, equipaje: 28800, horarios: ['06:50', '12:25', '20:35'] },
+    { iata: 'GIG', duracionMinutos: 315,  precioBase: 504000,  escalas: 0, equipaje: 21600, horarios: ['07:25', '13:45', '19:20'] },
+    { iata: 'SYD', duracionMinutos: 1035, precioBase: 1305000, escalas: 1, equipaje: 31500, horarios: ['07:15', '12:55', '19:40'] },
+    { iata: 'HND', duracionMinutos: 870,  precioBase: 1188000, escalas: 1, equipaje: 30600, horarios: ['08:25', '14:10', '22:00'] },
+    { iata: 'CCS', duracionMinutos: 210,  precioBase: 324000,  escalas: 0, equipaje: 19800, horarios: ['06:20', '12:15', '18:50'] },
+    { iata: 'MIA', duracionMinutos: 615,  precioBase: 621000,  escalas: 0, equipaje: 28800, horarios: ['06:10', '11:35', '19:45'] },
+    { iata: 'NYC', duracionMinutos: 720,  precioBase: 675000,  escalas: 1, equipaje: 27000, horarios: ['07:30', '14:20', '21:00'] },
 ];
 
 const rutasDesdeMIA = destinosDestacados
@@ -327,7 +327,7 @@ function calcularLlegada(horaSalida, duracionMinutos) {
 
 function generarVuelosParaRuta(ruta, fechaISO) {
     return ruta.horarios.map((horaSalida, indiceHorario) => {
-        const ajustePrecio = indiceHorario === 0 ? 0 : indiceHorario === 1 ? 35 : 60;
+        const ajustePrecio = indiceHorario === 0 ? 0 : indiceHorario === 1 ? 31500 : 54000;
         const precioBase = ruta.precioBase + ajustePrecio;
 
         return {

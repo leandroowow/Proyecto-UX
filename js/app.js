@@ -151,7 +151,7 @@ function descargarPDFConfirmacion() {
         pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 94);
         pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 102);
         pdf.text(`Clase: ${claseNombre}`, 14, 110);
-        pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 118);
+        pdf.text(`Precio total: ${formatearMoneda(reserva.total || calcularPrecioTotal(vuelo) || 0)}`, 14, 118);
     } else {
         pdf.text(`Correo: ${pasajero.correo || ''}`, 14, 50);
         pdf.text(`Telefono: ${pasajero.telefono || ''}`, 14, 58);
@@ -160,7 +160,7 @@ function descargarPDFConfirmacion() {
         pdf.text(`Horario: ${vuelo.salida || ''} - ${vuelo.llegada || ''}`, 14, 86);
         pdf.text(`Fecha: ${vuelo.fecha ? formatearFecha(vuelo.fecha) : ''}`, 14, 94);
         pdf.text(`Clase: ${claseNombre}`, 14, 102);
-        pdf.text(`Precio total: $${reserva.total || calcularPrecioTotal(vuelo) || 0}`, 14, 110);
+        pdf.text(`Precio total: ${formatearMoneda(reserva.total || calcularPrecioTotal(vuelo) || 0)}`, 14, 110);
     }
 
     pdf.save(`confirmacion-${reserva.codigoReserva || 'reserva'}.pdf`);
@@ -669,7 +669,7 @@ function crearTarjetaVuelo(vuelo) {
     const classEscalas  = vuelo.escalas === 0 ? 'flight-scales direct' : 'flight-scales';
 
     const textoPasajeros = pasajeros > 1
-        ? `<div class="text-muted small mt-1">$${precioPersona} x ${pasajeros} personas</div>`
+        ? `<div class="text-muted small mt-1">${formatearMoneda(precioPersona)} x ${pasajeros} personas</div>`
         : `<div class="text-muted small mt-1">precio por persona</div>`;
 
     tarjeta.innerHTML = `
@@ -695,7 +695,7 @@ function crearTarjetaVuelo(vuelo) {
             </div>
             <div class="flight-price">
                 <div class="price-label">total</div>
-                <div class="price">$${precioTotal}</div>
+                <div class="price">${formatearMoneda(precioTotal)}</div>
                 ${textoPasajeros}
                 <button class="btn btn-primary btn-sm fw-bold mt-2" data-vuelo-id="${vuelo.id}">
                     Reservar
@@ -750,7 +750,7 @@ function mostrarModalReserva(vuelo) {
         <div class="alert alert-info">
             <div class="d-flex justify-content-between mb-1">
                 <span>Precio por persona:</span>
-                <strong>$${precioPersona}</strong>
+                <strong>${formatearMoneda(precioPersona)}</strong>
             </div>
             <div class="d-flex justify-content-between mb-1">
                 <span>Pasajeros:</span>
@@ -758,7 +758,7 @@ function mostrarModalReserva(vuelo) {
             </div>
             <div class="d-flex justify-content-between border-top pt-2 mt-1">
                 <span class="fw-bold">Total:</span>
-                <strong>$${precioTotal}</strong>
+                <strong>${formatearMoneda(precioTotal)}</strong>
             </div>
             <p class="text-muted small mb-0 mt-2">Incluye: Tarifa + Impuestos + Equipaje</p>
         </div>
